@@ -1,0 +1,1012 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="基質厳選">
+<meta name="theme-color" content="#07090d">
+<link rel="manifest" href="manifest.json">
+<title>基質同時厳選ツール</title>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Noto+Sans+JP:wght@400;500;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#07090d;
+  --bg2:#0c0f15;
+  --bg3:#111620;
+  --bg4:#161d2a;
+  --border:#1e2736;
+  --border2:#263040;
+  --accent:#d4a843;
+  --accent2:#a87d2e;
+  --accent-glow:rgba(212,168,67,.18);
+  --text:#c8c4bc;
+  --dim:#4a5568;
+  --dim2:#2d3748;
+  --r6:#e8b830;
+  --r5:#c49ad8;
+  --r4:#5a9ed4;
+  --green:#3db86a;
+  --red:#d45050;
+  --blue:#4a8ec4;
+  --cyan:#3ab8c8;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+html,body{height:100%;overflow:hidden;}
+body{
+  background:var(--bg);color:var(--text);
+  font-family:'Noto Sans JP',sans-serif;
+  display:flex;flex-direction:column;
+  background-image:
+    repeating-linear-gradient(0deg,transparent,transparent 39px,rgba(30,39,54,.4) 39px,rgba(30,39,54,.4) 40px),
+    repeating-linear-gradient(90deg,transparent,transparent 39px,rgba(30,39,54,.2) 39px,rgba(30,39,54,.2) 40px);
+}
+
+/* ─── HEADER ─── */
+.app-header{
+  background:linear-gradient(180deg,#0e1420 0%,#0a0d14 100%);
+  border-bottom:2px solid var(--accent2);
+  padding:0 14px;
+  padding-top:env(safe-area-inset-top,0px);
+  display:flex;align-items:center;gap:10px;flex-shrink:0;
+  height:calc(50px + env(safe-area-inset-top,0px));
+  position:relative;
+  box-shadow:0 2px 20px rgba(0,0,0,.5);
+}
+.app-header::before{
+  content:'';position:absolute;bottom:-1px;left:0;right:0;
+  height:1px;background:linear-gradient(90deg,transparent,var(--accent),transparent);
+}
+.hlogo{
+  display:flex;align-items:center;gap:8px;
+}
+.hlogo-mark{
+  width:32px;height:32px;flex-shrink:0;position:relative;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  clip-path:polygon(50% 0%,100% 25%,100% 75%,50% 100%,0% 75%,0% 25%);
+  display:flex;align-items:center;justify-content:center;
+}
+.hlogo-mark::after{
+  content:'';position:absolute;inset:3px;
+  background:var(--bg);
+  clip-path:polygon(50% 0%,100% 25%,100% 75%,50% 100%,0% 75%,0% 25%);
+}
+.hlogo-mark-inner{
+  position:relative;z-index:1;
+  width:14px;height:14px;
+  background:var(--accent);
+  clip-path:polygon(50% 0%,100% 25%,100% 75%,50% 100%,0% 75%,0% 25%);
+}
+.htitle-wrap{}
+.htitle{
+  font-family:'Rajdhani',sans-serif;
+  font-size:16px;font-weight:700;
+  color:var(--accent);
+  letter-spacing:.12em;
+  line-height:1.1;
+}
+.htitle-sub{
+  font-size:8px;color:var(--dim);letter-spacing:.25em;text-transform:uppercase;
+  font-family:'Share Tech Mono',monospace;margin-top:1px;
+}
+.hstatus{
+  margin-left:auto;
+  display:flex;align-items:center;gap:6px;
+}
+.hstatus-dot{
+  width:5px;height:5px;border-radius:50%;
+  background:var(--green);
+  box-shadow:0 0 6px var(--green);
+  animation:blink 2s infinite;
+}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+.hstatus-text{font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--dim);letter-spacing:.1em;}
+
+/* ─── BOTTOM NAV ─── */
+.bottom-nav{
+  background:var(--bg2);
+  border-top:1px solid var(--border2);
+  display:flex;flex-shrink:0;
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+.bnav-btn{
+  flex:1;padding:9px 4px 7px;
+  display:flex;flex-direction:column;align-items:center;gap:2px;
+  background:none;border:none;color:var(--dim);cursor:pointer;
+  font-family:'Noto Sans JP',sans-serif;font-size:9px;letter-spacing:.08em;
+  transition:all .15s;position:relative;
+}
+.bnav-btn::before{
+  content:'';position:absolute;top:0;left:20%;right:20%;height:1px;
+  background:transparent;transition:background .15s;
+}
+.bnav-btn.active{color:var(--accent);}
+.bnav-btn.active::before{background:var(--accent);box-shadow:0 0 8px var(--accent);}
+.bnav-ico{font-size:16px;line-height:1;}
+
+/* ─── PAGES ─── */
+.pages{flex:1;overflow:hidden;position:relative;}
+.page{position:absolute;inset:0;overflow-y:auto;display:none;-webkit-overflow-scrolling:touch;}
+.page::-webkit-scrollbar{width:2px;}
+.page::-webkit-scrollbar-thumb{background:var(--border2);}
+.page.active{display:block;}
+.wrap{padding:10px 12px;}
+
+/* ─── PANEL ─── */
+.panel{
+  background:var(--bg2);
+  border:1px solid var(--border2);
+  border-radius:2px;
+  margin-bottom:10px;
+  overflow:hidden;
+  position:relative;
+}
+.panel::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,var(--border2),transparent);
+}
+.panel-hdr{
+  padding:8px 12px;
+  background:linear-gradient(90deg,rgba(212,168,67,.06) 0%,transparent 60%);
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;gap:8px;
+}
+.panel-hdr-label{
+  font-family:'Rajdhani',sans-serif;
+  font-size:11px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--accent);
+}
+.panel-hdr-label::before{content:'// ';}
+.panel-hdr-right{margin-left:auto;font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--dim);}
+.panel-body{padding:10px 12px;}
+
+/* ─── INPUTS ─── */
+select,input[type=text]{
+  width:100%;padding:8px 10px;
+  background:var(--bg3);
+  border:1px solid var(--border2);
+  border-radius:1px;
+  color:var(--text);font-size:13px;
+  font-family:'Noto Sans JP',sans-serif;
+  outline:none;-webkit-appearance:none;
+  transition:border-color .15s;
+}
+select:focus,input[type=text]:focus{
+  border-color:var(--accent2);
+  box-shadow:0 0 0 1px rgba(212,168,67,.15);
+}
+input[type=text]::placeholder{color:var(--dim);}
+
+.field{margin-bottom:10px;}
+.field-label{
+  font-family:'Share Tech Mono',monospace;
+  font-size:9px;color:var(--dim);letter-spacing:.2em;text-transform:uppercase;
+  display:block;margin-bottom:5px;
+}
+
+/* ─── CHIPS ─── */
+.chip-row{display:flex;flex-wrap:wrap;gap:4px;}
+.chip{
+  padding:4px 9px;
+  border:1px solid var(--border2);border-radius:1px;
+  font-size:11px;cursor:pointer;
+  background:var(--bg3);color:var(--dim);
+  font-family:'Noto Sans JP',sans-serif;user-select:none;
+  transition:all .12s;
+}
+.chip.active{background:rgba(212,168,67,.12);border-color:var(--accent);color:var(--accent);}
+.chip.r6a.active{background:rgba(232,184,48,.12);border-color:var(--r6);color:var(--r6);}
+.chip.r5a.active{background:rgba(196,154,216,.12);border-color:var(--r5);color:var(--r5);}
+.chip.r4a.active{background:rgba(90,158,212,.12);border-color:var(--r4);color:var(--r4);}
+
+/* ─── SORT ─── */
+.sort-row{display:flex;gap:4px;flex-wrap:wrap;}
+.sort-btn{
+  padding:4px 9px;border:1px solid var(--border2);border-radius:1px;
+  font-size:10px;cursor:pointer;background:var(--bg3);color:var(--dim);
+  font-family:'Share Tech Mono',monospace;user-select:none;
+  display:flex;align-items:center;gap:3px;transition:all .12s;
+}
+.sort-btn.active{background:rgba(212,168,67,.1);border-color:var(--accent2);color:var(--accent);}
+
+/* ─── RARITY TAG ─── */
+.rtag{
+  font-family:'Share Tech Mono',monospace;font-size:9px;
+  padding:1px 5px;border-radius:1px;flex-shrink:0;letter-spacing:.05em;
+}
+.r6{background:rgba(232,184,48,.12);color:var(--r6);border:1px solid rgba(232,184,48,.3);}
+.r5{background:rgba(196,154,216,.12);color:var(--r5);border:1px solid rgba(196,154,216,.3);}
+.r4{background:rgba(90,158,212,.12);color:var(--r4);border:1px solid rgba(90,158,212,.3);}
+
+/* ─── TAGS ─── */
+.tag{font-size:10px;padding:1px 6px;border-radius:1px;border:1px solid var(--border);color:var(--dim);}
+.tag.tp{border-color:rgba(74,142,196,.25);color:#4a8ec4;}
+.tag.bs{border-color:rgba(212,168,67,.25);color:#9a7830;}
+.tag.bs.hi{border-color:var(--accent);color:var(--accent);background:rgba(212,168,67,.08);}
+.tag.ad{border-color:rgba(61,184,106,.25);color:#3db86a;}
+.tag.ad.hi{border-color:var(--green);color:var(--green);background:rgba(61,184,106,.08);}
+.tag.sk{border-color:rgba(180,100,200,.25);color:#9060b0;}
+.tag.sk.hi{border-color:#a06cc0;color:#a06cc0;background:rgba(160,108,192,.08);}
+
+/* ─── AREA DOTS ─── */
+.adot{font-size:9px;padding:2px 5px;border-radius:1px;font-family:'Share Tech Mono',monospace;}
+.adot.yes{background:rgba(61,184,106,.1);color:var(--green);border:1px solid rgba(61,184,106,.25);}
+.adot.no{background:transparent;color:var(--dim2);border:1px solid var(--border);opacity:.5;}
+
+/* ─── WL ITEM ─── */
+.wl-item{
+  display:flex;align-items:center;gap:8px;
+  padding:8px 10px;
+  background:var(--bg3);border:1px solid var(--border);border-radius:1px;
+  cursor:pointer;margin-bottom:3px;user-select:none;
+  transition:border-color .1s,background .1s;
+  position:relative;
+}
+.wl-item::before{
+  content:'';position:absolute;left:0;top:0;bottom:0;width:2px;
+  background:transparent;transition:background .1s;
+}
+.wl-item.selected{
+  background:rgba(212,168,67,.06);border-color:rgba(212,168,67,.3);
+}
+.wl-item.selected::before{background:var(--accent);}
+.wl-name{font-size:12px;flex:1;letter-spacing:.02em;}
+.wl-chk{
+  width:16px;height:16px;border:1px solid var(--border2);border-radius:1px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:10px;color:var(--accent);flex-shrink:0;font-family:'Share Tech Mono',monospace;
+}
+.wl-item.selected .wl-chk{background:var(--accent);border-color:var(--accent);color:var(--bg);}
+
+/* ─── SEL STRIP ─── */
+.sel-strip{
+  display:flex;flex-wrap:wrap;gap:4px;padding:8px 12px;
+  border-bottom:1px solid var(--border);min-height:38px;align-items:center;
+  background:rgba(212,168,67,.03);
+}
+.sel-strip.empty::after{
+  content:'▸ 武器を選択してください';
+  font-size:10px;color:var(--dim);font-family:'Share Tech Mono',monospace;letter-spacing:.08em;
+}
+.sel-chip{
+  display:flex;align-items:center;gap:4px;padding:3px 7px;
+  background:rgba(212,168,67,.1);border:1px solid rgba(212,168,67,.3);
+  border-radius:1px;font-size:11px;
+}
+.sel-chip .rm{color:var(--dim);cursor:pointer;font-size:12px;padding:0 2px;margin-left:1px;}
+
+/* ─── RESET BTN ─── */
+.reset-btn{
+  width:100%;padding:8px;
+  background:transparent;
+  border:1px solid var(--border2);border-radius:1px;
+  color:var(--dim);font-size:11px;letter-spacing:.15em;
+  cursor:pointer;font-family:'Share Tech Mono',monospace;
+  margin-top:8px;transition:all .15s;
+}
+.reset-btn:active{border-color:var(--red);color:var(--red);}
+
+/* ─── AREA SECTION ─── */
+@keyframes fu{from{opacity:0;transform:translateY(4px);}to{opacity:1;transform:translateY(0);}}
+.area-sec{
+  margin-bottom:8px;border-radius:1px;overflow:hidden;
+  border:1px solid var(--border2);
+  animation:fu .2s ease;
+}
+.area-hdr{
+  padding:8px 12px;display:flex;align-items:center;gap:8px;
+  border-bottom:1px solid var(--border);
+}
+.area-hdr-name{
+  font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:600;
+  letter-spacing:.1em;
+}
+.area-cnt{
+  font-family:'Share Tech Mono',monospace;font-size:10px;
+  padding:1px 6px;border-radius:1px;margin-left:auto;
+}
+
+.tgt-strip{padding:7px 12px;border-bottom:1px solid var(--border);background:rgba(61,184,106,.03);}
+.tgt-label{font-family:'Share Tech Mono',monospace;font-size:8px;color:var(--green);letter-spacing:.2em;text-transform:uppercase;margin-bottom:5px;}
+.tgt-chips{display:flex;flex-wrap:wrap;gap:4px;}
+.tgt-chip{
+  display:flex;align-items:center;gap:4px;padding:2px 7px;
+  background:rgba(61,184,106,.08);border:1px solid rgba(61,184,106,.25);
+  border-radius:1px;font-size:11px;color:var(--green);
+}
+
+.base-sum{padding:7px 12px;border-bottom:1px solid var(--border);}
+.base-sum-label{font-family:'Share Tech Mono',monospace;font-size:8px;color:var(--dim);letter-spacing:.15em;text-transform:uppercase;margin-bottom:6px;}
+.base-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:4px;}
+.bcol{
+  background:var(--bg3);border:1px solid var(--border);border-radius:1px;
+  padding:5px 3px;text-align:center;
+}
+.bcol.hi{background:rgba(212,168,67,.08);border-color:rgba(212,168,67,.35);}
+.bcol-n{font-size:8px;color:var(--dim);margin-bottom:2px;letter-spacing:.05em;}
+.bcol.hi .bcol-n{color:var(--accent);}
+.bcol-c{font-family:'Share Tech Mono',monospace;font-size:14px;color:var(--dim);}
+.bcol.hi .bcol-c{color:var(--accent);}
+.bcol-names{font-size:7px;color:var(--dim2);margin-top:2px;line-height:1.4;word-break:break-all;}
+
+.eff-bar{padding:7px 12px;border-bottom:1px solid var(--border);display:flex;flex-direction:column;gap:6px;}
+.eff-row{display:flex;align-items:center;gap:4px;flex-wrap:wrap;}
+.eff-row-lbl{font-family:'Share Tech Mono',monospace;font-size:8px;color:var(--dim);letter-spacing:.1em;flex-shrink:0;width:48px;}
+.eff-chip{
+  padding:2px 8px;border:1px solid var(--border2);border-radius:1px;
+  font-size:10px;cursor:pointer;background:var(--bg3);color:var(--dim);
+  font-family:'Noto Sans JP',sans-serif;user-select:none;transition:all .1s;
+}
+.eff-chip.ao{background:rgba(61,184,106,.1);border-color:rgba(61,184,106,.4);color:var(--green);}
+.eff-chip.so{background:rgba(160,108,192,.1);border-color:rgba(160,108,192,.4);color:#a06cc0;}
+
+.farm-list{padding:8px 12px;display:flex;flex-direction:column;gap:4px;}
+.farm-label{font-family:'Share Tech Mono',monospace;font-size:8px;color:var(--dim);letter-spacing:.15em;text-transform:uppercase;margin-bottom:3px;}
+.fw{
+  background:var(--bg3);border:1px solid var(--border);border-radius:1px;
+  padding:7px 9px;border-left:2px solid transparent;
+}
+.fw.ma{border-left-color:var(--green);background:rgba(61,184,106,.04);}
+.fw.ms{border-left-color:#a06cc0;background:rgba(160,108,192,.04);}
+.fw.mb{border-left-color:var(--accent);background:rgba(212,168,67,.05);}
+.fw-top{display:flex;align-items:center;gap:5px;margin-bottom:5px;}
+.fw-name{font-size:12px;font-weight:700;flex:1;letter-spacing:.02em;}
+.fw-badge{font-family:'Share Tech Mono',monospace;font-size:8px;padding:1px 5px;border-radius:1px;flex-shrink:0;}
+.fw-badge.a{background:rgba(61,184,106,.12);color:var(--green);border:1px solid rgba(61,184,106,.3);}
+.fw-badge.s{background:rgba(160,108,192,.12);color:#a06cc0;border:1px solid rgba(160,108,192,.3);}
+.fw-badge.b{background:rgba(212,168,67,.12);color:var(--accent);border:1px solid rgba(212,168,67,.3);}
+.fw-tags{display:flex;flex-wrap:wrap;gap:3px;}
+
+/* ─── REVERSE ─── */
+.rev-sec{
+  background:var(--bg2);border:1px solid var(--border2);border-radius:1px;
+  margin-bottom:8px;overflow:hidden;
+}
+.rev-sec-hdr{
+  padding:8px 12px;background:var(--bg3);border-bottom:1px solid var(--border);
+  display:flex;align-items:center;gap:8px;
+}
+.rev-sec-title{font-family:'Rajdhani',sans-serif;font-size:12px;font-weight:600;letter-spacing:.1em;}
+.rev-sec-cnt{font-family:'Share Tech Mono',monospace;font-size:10px;padding:1px 6px;border-radius:1px;margin-left:auto;}
+.full-hdr .rev-sec-title{color:var(--accent);}
+.full-hdr .rev-sec-cnt{background:rgba(212,168,67,.12);color:var(--accent);border:1px solid rgba(212,168,67,.3);}
+.part-hdr .rev-sec-title{color:var(--dim);}
+.part-hdr .rev-sec-cnt{background:rgba(74,142,196,.1);color:var(--blue);border:1px solid rgba(74,142,196,.3);}
+.rev-cards{padding:8px 10px;display:flex;flex-direction:column;gap:4px;}
+
+.rcard{
+  background:var(--bg3);border:1px solid var(--border);border-radius:1px;
+  padding:8px 10px;border-left:2px solid var(--border2);
+}
+.rcard.pf{border-left-color:var(--accent);background:rgba(212,168,67,.04);}
+.rcard-top{display:flex;align-items:center;gap:5px;margin-bottom:6px;}
+.rcard-name{font-size:12px;font-weight:700;flex:1;letter-spacing:.02em;}
+.rscore{font-family:'Share Tech Mono',monospace;font-size:9px;padding:1px 5px;border-radius:1px;flex-shrink:0;}
+.sc3{background:rgba(212,168,67,.15);color:var(--accent);border:1px solid rgba(212,168,67,.35);}
+.sc2{background:rgba(61,184,106,.12);color:var(--green);border:1px solid rgba(61,184,106,.3);}
+.sc1{background:transparent;color:var(--dim);border:1px solid var(--border2);}
+.rcard-tags{display:flex;flex-wrap:wrap;gap:3px;margin-bottom:5px;}
+.rcard-areas{display:flex;gap:3px;flex-wrap:wrap;}
+
+/* ─── EMPTY ─── */
+.empty-msg{
+  text-align:center;padding:36px 16px;color:var(--dim);
+  font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:.08em;
+}
+.empty-msg .ei{font-size:20px;opacity:.2;margin-bottom:8px;}
+
+/* ─── S-COUNT ─── */
+.s-cnt{
+  font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--dim);
+  margin-bottom:6px;letter-spacing:.1em;
+}
+.s-cnt span{color:var(--accent);font-size:16px;}
+</style>
+</head>
+<body>
+
+<div class="app-header">
+  <div class="hlogo">
+    <div class="hlogo-mark"><div class="hlogo-mark-inner"></div></div>
+    <div class="htitle-wrap">
+      <div class="htitle">基質同時厳選ツール</div>
+      <div class="htitle-sub">ENDFIELD ESSENCE SOLVER v1.0</div>
+    </div>
+  </div>
+  <div class="hstatus">
+    <div class="hstatus-dot"></div>
+    <div class="hstatus-text">ONLINE</div>
+  </div>
+</div>
+
+<div class="pages">
+
+  <!-- ── SOLVER ── -->
+  <div class="page active" id="page-solver"><div class="wrap">
+    <div class="panel">
+      <div class="panel-hdr">
+        <span class="panel-hdr-label">武器選択</span>
+        <span class="panel-hdr-right" id="selCount">0 SELECTED</span>
+      </div>
+      <div class="panel-body" style="padding:8px 10px">
+        <div id="weaponList" style="max-height:280px;overflow-y:auto"></div>
+        <button class="reset-btn" id="clearSelBtn">[ CLEAR SELECTION ]</button>
+      </div>
+    </div>
+    <div class="sel-strip empty" id="selectedChips"></div>
+    <div id="areaResults">
+      <div class="empty-msg"><div class="ei">◈</div>LEFT PANEL より武器を選択</div>
+    </div>
+  </div></div>
+
+  <!-- ── REVERSE ── -->
+  <div class="page" id="page-reverse"><div class="wrap">
+
+    <!-- 基質検索 -->
+    <div class="panel">
+      <div class="panel-hdr"><span class="panel-hdr-label">基質検索</span></div>
+      <div class="panel-body" style="display:flex;flex-direction:column;gap:9px">
+        <div class="field">
+          <span class="field-label">基礎効果</span>
+          <select id="r-base">
+            <option value="">── SELECT ──</option>
+            <option>敏捷</option><option>筋力</option><option>意志</option><option>知性</option><option>メイン能力</option>
+          </select>
+        </div>
+        <div class="field">
+          <span class="field-label">付加効果</span>
+          <select id="r-add">
+            <option value="">── SELECT ──</option>
+            <option>攻撃力</option><option>HPアップ</option><option>物理ダメージ</option><option>灼熱ダメージ</option>
+            <option>電磁ダメージ</option><option>寒冷ダメージ</option><option>自然ダメージ</option><option>アーツ強度</option>
+            <option>必殺技効率</option><option>アーツダメージ</option><option>会心率</option><option>回復効率</option>
+          </select>
+        </div>
+        <div class="field">
+          <span class="field-label">スキル効果</span>
+          <select id="r-skill">
+            <option value="">── SELECT ──</option>
+            <option>夜幕</option><option>付術</option><option>流回</option><option>圧制</option><option>噴発</option>
+            <option>追襲</option><option>破砕</option><option>残虐</option><option>巧技</option><option>昂揚</option>
+            <option>治癒</option><option>効率</option><option>切骨</option><option>制圧</option><option>強攻</option>
+          </select>
+        </div>
+        <button class="reset-btn" id="r-clearBtn">[ RESET ]</button>
+      </div>
+    </div>
+    <div id="reverseResults">
+      <div class="empty-msg"><div class="ei">◈</div>基礎効果を選択してください</div>
+    </div>
+
+    <!-- 手持ち基質リスト -->
+    <div class="panel" style="margin-top:14px">
+      <div class="panel-hdr">
+        <span class="panel-hdr-label">手持ち基質リスト</span>
+        <span class="panel-hdr-right" id="inv-count">0 ITEMS</span>
+      </div>
+      <div class="panel-body" style="padding:8px 10px">
+        <!-- 登録フォーム -->
+        <div style="display:flex;flex-direction:column;gap:7px;margin-bottom:10px;padding-bottom:10px;border-bottom:1px solid var(--border)">
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px">
+            <div>
+              <div class="field-label" style="margin-bottom:4px">基礎</div>
+              <select id="inv-base" style="font-size:11px;padding:6px 7px">
+                <option value="">──</option>
+                <option>敏捷</option><option>筋力</option><option>意志</option><option>知性</option><option>メイン能力</option>
+              </select>
+            </div>
+            <div>
+              <div class="field-label" style="margin-bottom:4px">付加</div>
+              <select id="inv-add" style="font-size:11px;padding:6px 7px">
+                <option value="">──</option>
+                <option>攻撃力</option><option>HPアップ</option><option>物理ダメージ</option><option>灼熱ダメージ</option>
+                <option>電磁ダメージ</option><option>寒冷ダメージ</option><option>自然ダメージ</option><option>アーツ強度</option>
+                <option>必殺技効率</option><option>アーツダメージ</option><option>会心率</option><option>回復効率</option>
+              </select>
+            </div>
+            <div>
+              <div class="field-label" style="margin-bottom:4px">スキル</div>
+              <select id="inv-skill" style="font-size:11px;padding:6px 7px">
+                <option value="">──</option>
+                <option>夜幕</option><option>付術</option><option>流回</option><option>圧制</option><option>噴発</option>
+                <option>追襲</option><option>破砕</option><option>残虐</option><option>巧技</option><option>昂揚</option>
+                <option>治癒</option><option>効率</option><option>切骨</option><option>制圧</option><option>強攻</option>
+              </select>
+            </div>
+          </div>
+          <div>
+            <div class="field-label" style="margin-bottom:4px">メモ（なぜ残してるか）</div>
+            <input type="text" id="inv-memo" placeholder="例：フレイムフォージ狙い中" style="font-size:12px">
+          </div>
+          <button id="inv-addBtn" style="
+            padding:8px;background:rgba(212,168,67,.12);
+            border:1px solid var(--accent2);border-radius:1px;
+            color:var(--accent);font-size:11px;letter-spacing:.15em;
+            cursor:pointer;font-family:'Share Tech Mono',monospace;
+          ">[ + ADD ESSENCE ]</button>
+        </div>
+
+        <!-- リスト -->
+        <div id="inv-list"></div>
+        <div id="inv-empty" style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--dim);text-align:center;padding:16px;letter-spacing:.08em">NO DATA</div>
+
+        <!-- インポート/エクスポート -->
+        <div style="display:flex;gap:6px;margin-top:10px;padding-top:10px;border-top:1px solid var(--border)">
+          <button id="inv-exportBtn" style="
+            flex:1;padding:7px;background:rgba(74,142,196,.1);
+            border:1px solid rgba(74,142,196,.3);border-radius:1px;
+            color:#4a8ec4;font-size:10px;letter-spacing:.12em;
+            cursor:pointer;font-family:'Share Tech Mono',monospace;
+          ">↓ EXPORT</button>
+          <label style="
+            flex:1;padding:7px;background:rgba(160,108,192,.1);
+            border:1px solid rgba(160,108,192,.3);border-radius:1px;
+            color:#a06cc0;font-size:10px;letter-spacing:.12em;
+            cursor:pointer;font-family:'Share Tech Mono',monospace;
+            text-align:center;display:block;
+          ">↑ IMPORT<input type="file" id="inv-importFile" accept=".json" style="display:none"></label>
+        </div>
+      </div>
+    </div>
+
+  </div></div>
+
+  <!-- ── SEARCH / 武器選択 ── -->
+  <div class="page" id="page-search"><div class="wrap">
+    <div class="panel">
+      <div class="panel-hdr">
+        <span class="panel-hdr-label">フィルター</span>
+        <span class="panel-hdr-right" id="s-selcount">0 SELECTED</span>
+      </div>
+      <div class="panel-body">
+        <div class="field"><span class="field-label">武器名</span><input type="text" id="s-name" placeholder="SEARCH..."></div>
+        <div class="field"><span class="field-label">レア度</span>
+          <div class="chip-row" id="s-rarity">
+            <div class="chip r6a" data-val="★6">★6</div><div class="chip r5a" data-val="★5">★5</div><div class="chip r4a" data-val="★4">★4</div>
+          </div>
+        </div>
+        <div class="field"><span class="field-label">種類</span>
+          <div class="chip-row" id="s-type">
+            <div class="chip" data-val="片手剣">片手剣</div><div class="chip" data-val="大剣">大剣</div>
+            <div class="chip" data-val="長柄武器">長柄</div><div class="chip" data-val="拳銃">拳銃</div>
+            <div class="chip" data-val="アーツユニット">アーツ</div>
+          </div>
+        </div>
+        <div class="field"><span class="field-label">基礎効果</span>
+          <div class="chip-row" id="s-base">
+            <div class="chip" data-val="敏捷">敏捷</div><div class="chip" data-val="筋力">筋力</div>
+            <div class="chip" data-val="意志">意志</div><div class="chip" data-val="知性">知性</div>
+            <div class="chip" data-val="メイン能力">メイン</div>
+          </div>
+        </div>
+        <div class="field"><span class="field-label">付加効果</span>
+          <select id="s-add">
+            <option value="">すべて</option><option>攻撃力</option><option>HPアップ</option><option>物理ダメージ</option>
+            <option>灼熱ダメージ</option><option>電磁ダメージ</option><option>寒冷ダメージ</option><option>自然ダメージ</option>
+            <option>アーツ強度</option><option>必殺技効率</option><option>アーツダメージ</option><option>会心率</option><option>回復効率</option>
+          </select>
+        </div>
+        <div class="field"><span class="field-label">スキル効果</span>
+          <select id="s-skill">
+            <option value="">すべて</option><option>夜幕</option><option>付術</option><option>流回</option><option>圧制</option>
+            <option>噴発</option><option>追襲</option><option>破砕</option><option>残虐</option><option>巧技</option>
+            <option>昂揚</option><option>治癒</option><option>効率</option><option>切骨</option><option>制圧</option><option>強攻</option>
+          </select>
+        </div>
+        <div class="field"><span class="field-label">入手エリア</span>
+          <div class="chip-row" id="s-area">
+            <div class="chip" data-val="中枢エリア">中枢</div><div class="chip" data-val="源石研究パーク">源石</div>
+            <div class="chip" data-val="鉱山エリア">鉱山</div><div class="chip" data-val="エネルギー高地">ENG</div>
+            <div class="chip" data-val="武陵城">武陵城</div>
+          </div>
+        </div>
+        <div class="field"><span class="field-label">ソート</span>
+          <div class="sort-row">
+            <button class="sort-btn active" data-sort="rarity"><span id="sarr-rarity">↓</span> RARITY</button>
+            <button class="sort-btn" data-sort="type"><span id="sarr-type"></span> TYPE</button>
+          </div>
+        </div>
+        <button class="reset-btn" id="s-reset">[ CLEAR FILTER ]</button>
+      </div>
+    </div>
+    <div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--dim);padding:4px 2px 6px;letter-spacing:.1em">▸ タップで選択 / 再タップで解除</div>
+    <div class="s-cnt"><span id="s-count">0</span> RESULTS</div>
+    <div id="s-grid"></div>
+    <div class="empty-msg" id="s-nores" style="display:none"><div class="ei">◈</div>NO RESULTS</div>
+  </div></div>
+
+</div>
+
+<nav class="bottom-nav">
+  <button class="bnav-btn active" data-tab="solver"><span class="bnav-ico">◈</span>SOLVER</button>
+  <button class="bnav-btn" data-tab="reverse"><span class="bnav-ico">⚗</span>逆引き</button>
+  <button class="bnav-btn" data-tab="search"><span class="bnav-ico">◉</span>武器選択</button>
+</nav>
+
+<script>
+const WEAPONS=[
+  {id:1,rarity:"★6",name:"フレイムフォージ",type:"片手剣",base:"知性",add:"攻撃力",skill:"夜幕",areas:{中枢エリア:false,源石研究パーク:false,鉱山エリア:false,エネルギー高地:false,武陵城:true}},
+  {id:2,rarity:"★6",name:"大願",type:"片手剣",base:"敏捷",add:"攻撃力",skill:"付術",areas:{中枢エリア:false,源石研究パーク:true,鉱山エリア:false,エネルギー高地:true,武陵城:false}},
+  {id:3,rarity:"★6",name:"不知帰",type:"片手剣",base:"意志",add:"攻撃力",skill:"流回",areas:{中枢エリア:true,源石研究パーク:false,鉱山エリア:false,エネルギー高地:true,武陵城:true}},
+  {id:4,rarity:"★6",name:"テルミット・カッター",type:"片手剣",base:"意志",add:"攻撃力",skill:"流回",areas:{中枢エリア:true,源石研究パーク:false,鉱山エリア:false,エネルギー高地:true,武陵城:true}},
+  {id:5,rarity:"★6",name:"ダークトーチ",type:"片手剣",base:"知性",add:"灼熱ダメージ",skill:"付術",areas:{中枢エリア:false,源石研究パーク:false,鉱山エリア:true,エネルギー高地:true,武陵城:false}},
+  {id:6,rarity:"★6",name:"フーヤオ",type:"片手剣",base:"メイン能力",add:"会心率",skill:"夜幕",areas:{中枢エリア:false,源石研究パーク:false,鉱山エリア:true,エネルギー高地:false,武陵城:true}},
+  {id:7,rarity:"★6",name:"輝かしき名声",type:"片手剣",base:"メイン能力",add:"物理ダメージ",skill:"残虐",areas:{中枢エリア:false,源石研究パーク:false,鉱山エリア:true,エネルギー高地:true,武陵城:false}},
+  {id:8,rarity:"★6",name:"白夜新星",type:"片手剣",base:"メイン能力",add:"アーツ強度",skill:"付術",areas:{中枢エリア:false,源石研究パーク:false,鉱山エリア:true,エネルギー高地:true,武陵城:false}},
+  {id:9,rarity:"★6",name:"栄光の記憶",type:"片手剣",base:"敏捷",add:"会心率",skill:"夜幕",areas:{中枢エリア:false,源石研究パーク:false,鉱山エリア:true,エネルギー高地:false,武陵城:true}},
+  {id:10,rarity:"★6",name:"大雷斑",type:"大剣",base:"筋力",add:"HPアップ",skill:"治癒",areas:{中枢エリア:false,源石研究パーク:false,鉱山エリア:false,エネルギー高地:true,武陵城:true}},
+  {id:11,rarity:"★6",name:"グラヴェンガー",type:"大剣",base:"筋力",add:"攻撃力",skill:"噴発",areas:{中枢エリア:true,源石研究パーク:false,鉱山エリア:false,エネルギー高地:false,武陵城:true}},
+  {id:12,rarity:"★6",name:"鑑",type:"大剣",base:"メイン能力",add:"攻撃力",skill:"圧制",areas:{中枢エリア:true,源石研究パーク:true,鉱山エリア:false,エネルギー高地:false,武陵城:false}},
+  {id:13,rarity:"★6",name:"昔日の逸品",type:"大剣",base:"意志",add:"HPアップ",skill:"効率",areas:{中枢エリア:false,源石研究パーク:false,鉱山エリア:true,エネルギー高地:false,武陵城:false}},
+  {id:14,rarity:"★6",name:"破砕君王",type:"大剣",base:"筋力",add:"会心率",skill:"破砕",areas:{中枢エリア:false,源石研究パーク:false,鉱山エリア:false,エネルギー高地:true,武陵城:true}},
+  {id:15,rarity:"★6",name:"負山",type:"長柄武器",base:"敏捷",add:"物理ダメージ",skill:"効率",areas:{中枢エリア:false,源石研究パーク:true,鉱山エリア:true,エネルギー高地:false,武陵城:false}},
+  {id:16,rarity:"★6",name:"勇猛",type:"長柄武器",base:"敏捷",add:"物理ダメージ",skill:"巧技",areas:{中枢エリア:false,源石研究パーク:true,鉱山エリア:true,エネルギー高地:false,武陵城:false}},
+  {id:17,rarity:"★6",name:"J.E.T.",type:"長柄武器",base:"メイン能力",add:"攻撃力",skill:"圧制",areas:{中枢エリア:true,源石研究パーク:true,鉱山エリア:false,エネルギー高地:false,武陵城:false}},
+  {id:18,rarity:"★6",name:"芸術の独裁者",type:"拳銃",base:"知性",add:"会心率",skill:"切骨",areas:{中枢エリア:false,源石研究パーク:true,鉱山エリア:false,エネルギー高地:true,武陵城:true}},
+  {id:19,rarity:"★6",name:"ナビゲーター",type:"拳銃",base:"知性",add:"寒冷ダメージ",skill:"付術",areas:{中枢エリア:false,源石研究パーク:true,鉱山エリア:true,エネルギー高地:false,武陵城:false}},
+  {id:20,rarity:"★6",name:"楔",type:"拳銃",base:"メイン能力",add:"会心率",skill:"付術",areas:{中枢エリア:false,源石研究パーク:true,鉱山エリア:true,エネルギー高地:true,武陵城:false}},
+  {id:21,rarity:"★6",name:"同類共食",type:"拳銃",base:"メイン能力",add:"アーツダメージ",skill:"付術",areas:{中枢エリア:false,源石研究パーク:true,鉱山エリア:false,エネルギー高地:false,武陵城:false}},
+  {id:22,rarity:"★6",name:"落草",type:"拳銃",base:"敏捷",add:"攻撃力",skill:"噴発",areas:{中枢エリア:true,源石研究パーク:false,鉱山エリア:false,エネルギー高地:false,武陵城:true}},
+  {id:23,rarity:"★6",name:"望郷",type:"拳銃",base:"敏捷",add:"寒冷ダメージ",skill:"圧制",areas:{中枢エリア:true,源石研究パーク:true,鉱山エリア:true,エネルギー高地:false,武陵城:false}},
+  {id:24,rarity:"★6",name:"破壊ユニット",type:"アーツユニット",base:"メイン能力",add:"アーツ強度",skill:"噴発",areas:{中枢エリア:true,源石研究パーク:false,鉱山エリア:true,エネルギー高地:false,武陵城:false}},
+  {id:25,rarity:"★6",name:"蒼星の囁き",type:"アーツユニット",base:"知性",add:"回復効率",skill:"付術",areas:{中枢エリア:false,源石研究パーク:false,鉱山エリア:true,エネルギー高地:true,武陵城:false}},
+  {id:26,rarity:"★6",name:"騎士精神",type:"アーツユニット",base:"意志",add:"HPアップ",skill:"治癒",areas:{中枢エリア:false,源石研究パーク:false,鉱山エリア:false,エネルギー高地:true,武陵城:true}},
+  {id:27,rarity:"★6",name:"使命必達",type:"アーツユニット",base:"意志",add:"必殺技効率",skill:"追襲",areas:{中枢エリア:true,源石研究パーク:true,鉱山エリア:false,エネルギー高地:false,武陵城:false}},
+  {id:28,rarity:"★6",name:"遺忘",type:"アーツユニット",base:"知性",add:"アーツダメージ",skill:"夜幕",areas:{中枢エリア:false,源石研究パーク:false,鉱山エリア:false,エネルギー高地:false,武陵城:true}},
+  {id:29,rarity:"★6",name:"作品：蝕跡",type:"アーツユニット",base:"意志",add:"自然ダメージ",skill:"圧制",areas:{中枢エリア:true,源石研究パーク:true,鉱山エリア:true,エネルギー高地:false,武陵城:false}},
+  {id:30,rarity:"★5",name:"鋼鉄余音",type:"片手剣",base:"敏捷",add:"物理ダメージ",skill:"巧技",areas:{中枢エリア:false,源石研究パーク:true,鉱山エリア:true,エネルギー高地:false,武陵城:false}},
+  {id:31,rarity:"★5",name:"堅城鋳造者",type:"片手剣",base:"知性",add:"必殺技効率",skill:"昂揚",areas:{中枢エリア:false,源石研究パーク:true,鉱山エリア:false,エネルギー高地:false,武陵城:false}},
+  {id:32,rarity:"★5",name:"フィンチェイサー3.0",type:"片手剣",base:"筋力",add:"寒冷ダメージ",skill:"圧制",areas:{中枢エリア:true,源石研究パーク:true,鉱山エリア:true,エネルギー高地:false,武陵城:false}},
+  {id:33,rarity:"★5",name:"抑止",type:"片手剣",base:"敏捷",add:"物理ダメージ",skill:"夜幕",areas:{中枢エリア:false,源石研究パーク:false,鉱山エリア:true,エネルギー高地:false,武陵城:false}},
+  {id:34,rarity:"★5",name:"十二問",type:"片手剣",base:"敏捷",add:"攻撃力",skill:"付術",areas:{中枢エリア:false,源石研究パーク:true,鉱山エリア:false,エネルギー高地:true,武陵城:false}},
+  {id:35,rarity:"★5",name:"O.B.J.軽刃",type:"片手剣",base:"敏捷",add:"攻撃力",skill:"流回",areas:{中枢エリア:true,源石研究パーク:false,鉱山エリア:false,エネルギー高地:true,武陵城:true}},
+  {id:36,rarity:"★5",name:"探龍",type:"大剣",base:"筋力",add:"必殺技効率",skill:"噴発",areas:{中枢エリア:true,源石研究パーク:false,鉱山エリア:false,エネルギー高地:false,武陵城:true}},
+  {id:37,rarity:"★5",name:"千古恒常",type:"大剣",base:"筋力",add:"アーツ強度",skill:"残虐",areas:{中枢エリア:false,源石研究パーク:false,鉱山エリア:true,エネルギー高地:true,武陵城:false}},
+  {id:38,rarity:"★5",name:"最期の声",type:"大剣",base:"筋力",add:"HPアップ",skill:"治癒",areas:{中枢エリア:false,源石研究パーク:false,鉱山エリア:false,エネルギー高地:true,武陵城:true}},
+  {id:39,rarity:"★5",name:"O.B.J.重責",type:"大剣",base:"筋力",add:"HPアップ",skill:"効率",areas:{中枢エリア:false,源石研究パーク:false,鉱山エリア:true,エネルギー高地:false,武陵城:false}},
+  {id:40,rarity:"★5",name:"正義嵌合",type:"長柄武器",base:"筋力",add:"必殺技効率",skill:"残虐",areas:{中枢エリア:false,源石研究パーク:false,鉱山エリア:false,エネルギー高地:false,武陵城:true}},
+  {id:41,rarity:"★5",name:"O.B.J.鋭矛",type:"長柄武器",base:"意志",add:"物理ダメージ",skill:"付術",areas:{中枢エリア:false,源石研究パーク:true,鉱山エリア:true,エネルギー高地:true,武陵城:false}},
+  {id:42,rarity:"★5",name:"求心の槍",type:"長柄武器",base:"意志",add:"電磁ダメージ",skill:"圧制",areas:{中枢エリア:true,源石研究パーク:true,鉱山エリア:false,エネルギー高地:false,武陵城:false}},
+  {id:43,rarity:"★5",name:"作品：衆生",type:"拳銃",base:"敏捷",add:"アーツダメージ",skill:"付術",areas:{中枢エリア:false,源石研究パーク:true,鉱山エリア:false,エネルギー高地:false,武陵城:false}},
+  {id:44,rarity:"★5",name:"O.B.J.迅速",type:"拳銃",base:"敏捷",add:"必殺技効率",skill:"噴発",areas:{中枢エリア:true,源石研究パーク:false,鉱山エリア:false,エネルギー高地:false,武陵城:true}},
+  {id:45,rarity:"★5",name:"合理的決別",type:"拳銃",base:"筋力",add:"灼熱ダメージ",skill:"追襲",areas:{中枢エリア:true,源石研究パーク:false,鉱山エリア:false,エネルギー高地:true,武陵城:false}},
+  {id:46,rarity:"★5",name:"弔いの詩",type:"アーツユニット",base:"知性",add:"攻撃力",skill:"夜幕",areas:{中枢エリア:false,源石研究パーク:false,鉱山エリア:false,エネルギー高地:false,武陵城:true}},
+  {id:47,rarity:"★5",name:"術無",type:"アーツユニット",base:"意志",add:"必殺技効率",skill:"昂揚",areas:{中枢エリア:false,源石研究パーク:true,鉱山エリア:false,エネルギー高地:false,武陵城:false}},
+  {id:48,rarity:"★5",name:"荒野迷走",type:"アーツユニット",base:"知性",add:"電磁ダメージ",skill:"付術",areas:{中枢エリア:false,源石研究パーク:true,鉱山エリア:false,エネルギー高地:false,武陵城:false}},
+  {id:49,rarity:"★5",name:"布教の自由",type:"アーツユニット",base:"意志",add:"回復効率",skill:"治癒",areas:{中枢エリア:false,源石研究パーク:false,鉱山エリア:false,エネルギー高地:true,武陵城:true}},
+  {id:50,rarity:"★5",name:"O.B.J.術識",type:"アーツユニット",base:"知性",add:"アーツ強度",skill:"追襲",areas:{中枢エリア:true,源石研究パーク:false,鉱山エリア:false,エネルギー高地:true,武陵城:false}},
+  {id:51,rarity:"★4",name:"緊急設計",type:"片手剣",base:"敏捷",add:"物理ダメージ",skill:"制圧",areas:{中枢エリア:false,源石研究パーク:false,鉱山エリア:false,エネルギー高地:false,武陵城:false}},
+  {id:52,rarity:"★4",name:"潮流",type:"片手剣",base:"知性",add:"攻撃力",skill:"追襲",areas:{中枢エリア:true,源石研究パーク:true,鉱山エリア:false,エネルギー高地:true,武陵城:false}},
+  {id:53,rarity:"★4",name:"工業零点一",type:"大剣",base:"筋力",add:"攻撃力",skill:"制圧",areas:{中枢エリア:false,源石研究パーク:false,鉱山エリア:false,エネルギー高地:false,武陵城:false}},
+  {id:54,rarity:"★4",name:"鍛冶師",type:"大剣",base:"意志",add:"HPアップ",skill:"破砕",areas:{中枢エリア:false,源石研究パーク:false,鉱山エリア:false,エネルギー高地:true,武陵城:true}},
+  {id:55,rarity:"★4",name:"開拓者の道標",type:"長柄武器",base:"敏捷",add:"攻撃力",skill:"昂揚",areas:{中枢エリア:false,源石研究パーク:true,鉱山エリア:false,エネルギー高地:true,武陵城:false}},
+  {id:56,rarity:"★4",name:"アンゲロス・スレイヤー",type:"長柄武器",base:"意志",add:"アーツダメージ",skill:"制圧",areas:{中枢エリア:false,源石研究パーク:false,鉱山エリア:false,エネルギー高地:false,武陵城:false}},
+  {id:57,rarity:"★4",name:"ロアーガード",type:"拳銃",base:"知性",add:"攻撃力",skill:"制圧",areas:{中枢エリア:false,源石研究パーク:false,鉱山エリア:false,エネルギー高地:false,武陵城:false}},
+  {id:58,rarity:"★4",name:"長路",type:"拳銃",base:"筋力",add:"アーツダメージ",skill:"追襲",areas:{中枢エリア:true,源石研究パーク:true,鉱山エリア:false,エネルギー高地:false,武陵城:false}},
+  {id:59,rarity:"★4",name:"オート・ハイパーノヴァ",type:"アーツユニット",base:"知性",add:"アーツダメージ",skill:"昂揚",areas:{中枢エリア:false,源石研究パーク:true,鉱山エリア:false,エネルギー高地:false,武陵城:false}},
+  {id:60,rarity:"★4",name:"蛍光雷羽",type:"アーツユニット",base:"意志",add:"攻撃力",skill:"制圧",areas:{中枢エリア:false,源石研究パーク:false,鉱山エリア:false,エネルギー高地:false,武陵城:false}},
+];
+
+const AREAS=["中枢エリア","源石研究パーク","鉱山エリア","エネルギー高地","武陵城"];
+const AS={"中枢エリア":"中枢","源石研究パーク":"源石","鉱山エリア":"鉱山","エネルギー高地":"ENG","武陵城":"武陵"};
+const BASES=["敏捷","筋力","意志","知性","メイン能力"];
+const TYPE_ORDER=["片手剣","大剣","長柄武器","拳銃","アーツユニット"];
+const AC={
+  "中枢エリア":   {bg:"rgba(74,142,196,.08)", bd:"rgba(74,142,196,.3)", tx:"#4a8ec4"},
+  "源石研究パーク":{bg:"rgba(160,108,192,.08)",bd:"rgba(160,108,192,.3)",tx:"#a06cc0"},
+  "鉱山エリア":   {bg:"rgba(196,152,72,.08)", bd:"rgba(196,152,72,.3)", tx:"#c49848"},
+  "エネルギー高地":{bg:"rgba(212,80,80,.08)",  bd:"rgba(212,80,80,.3)",  tx:"#d45050"},
+  "武陵城":       {bg:"rgba(61,184,106,.08)",  bd:"rgba(61,184,106,.3)", tx:"#3db86a"},
+};
+
+let selIds=new Set();
+const af={};AREAS.forEach(a=>{af[a]={add:"",skill:""};});
+function rc(r){return r==="★6"?"r6":r==="★5"?"r5":"r4";}
+
+// SOLVER
+function renderWL(){
+  const el=document.getElementById('weaponList');
+  el.innerHTML=WEAPONS.map(w=>`
+    <div class="wl-item${selIds.has(w.id)?' selected':''}" data-id="${w.id}">
+      <span class="rtag ${rc(w.rarity)}">${w.rarity}</span>
+      <span class="wl-name">${w.name}</span>
+      <span class="wl-chk">${selIds.has(w.id)?'✓':''}</span>
+    </div>`).join('');
+  el.querySelectorAll('.wl-item').forEach(e=>e.addEventListener('click',()=>{
+    const id=parseInt(e.dataset.id);
+    selIds.has(id)?selIds.delete(id):selIds.add(id);
+    renderSolver();
+  }));
+}
+
+function renderChips(){
+  const c=document.getElementById('selectedChips');
+  const sel=WEAPONS.filter(w=>selIds.has(w.id));
+  document.getElementById('selCount').textContent=sel.length+' SELECTED';
+  if(!sel.length){c.innerHTML='';c.className='sel-strip empty';return;}
+  c.className='sel-strip';
+  c.innerHTML=sel.map(w=>`<div class="sel-chip"><span class="rtag ${rc(w.rarity)}" style="font-size:8px">${w.rarity}</span>${w.name}<span class="rm" data-id="${w.id}">×</span></div>`).join('');
+  c.querySelectorAll('.rm').forEach(b=>b.addEventListener('click',()=>{selIds.delete(parseInt(b.dataset.id));renderSolver();}));
+}
+
+function renderArea(){
+  const c=document.getElementById('areaResults');
+  const sel=WEAPONS.filter(w=>selIds.has(w.id));
+  if(!sel.length){c.innerHTML='<div class="empty-msg"><div class="ei">◈</div>LEFT PANEL より武器を選択</div>';return;}
+  let html='';
+  AREAS.forEach(area=>{
+    const tgt=sel.filter(w=>w.areas[area]);
+    if(!tgt.length)return;
+    const col=AC[area],f=af[area];
+    const allA=WEAPONS.filter(w=>w.areas[area]);
+    const others=allA.filter(w=>!selIds.has(w.id));
+    const addO=[...new Set(tgt.map(w=>w.add))];
+    const sklO=[...new Set(tgt.map(w=>w.skill))];
+    const tBases=new Set(tgt.map(w=>w.base));
+    const bgrid=BASES.map(b=>{
+      const cnt=allA.filter(w=>w.base===b).length;
+      const nm=allA.filter(w=>w.base===b).map(w=>w.name).join('・');
+      return `<div class="bcol${tBases.has(b)?' hi':''}"><div class="bcol-n">${b}</div><div class="bcol-c">${cnt}</div><div class="bcol-names">${nm||'—'}</div></div>`;
+    }).join('');
+    const ac=addO.map(v=>`<span class="eff-chip${f.add===v?' ao':''}" data-area="${area}" data-t="add" data-v="${v}">${v}</span>`).join('')+(f.add?`<span class="eff-chip ao" data-area="${area}" data-t="add" data-v="">✕</span>`:'');
+    const sc=sklO.map(v=>`<span class="eff-chip${f.skill===v?' so':''}" data-area="${area}" data-t="skill" data-v="${v}">${v}</span>`).join('')+(f.skill?`<span class="eff-chip so" data-area="${area}" data-t="skill" data-v="">✕</span>`:'');
+    let farm=others.map(w=>{const ma=f.add&&w.add===f.add,ms=f.skill&&w.skill===f.skill,mt=ma&&ms?'mb':ma?'ma':ms?'ms':'';return{...w,mt};});
+    if(f.add||f.skill)farm=farm.filter(w=>w.mt);
+    farm.sort((a,b)=>['mb','ma','ms',''].indexOf(a.mt)-['mb','ma','ms',''].indexOf(b.mt));
+    const fc=farm.length?farm.map(w=>{
+      const bdg=w.mt==='mb'?`<span class="fw-badge b">ADD+SKILL</span>`:w.mt==='ma'?`<span class="fw-badge a">ADD</span>`:w.mt==='ms'?`<span class="fw-badge s">SKILL</span>`:'';
+      return `<div class="fw${w.mt?' '+w.mt:''}"><div class="fw-top"><span class="rtag ${rc(w.rarity)}">${w.rarity}</span><span class="fw-name">${w.name}</span>${bdg}</div><div class="fw-tags"><span class="tag tp">${w.type}</span><span class="tag bs">${w.base}</span><span class="tag ad${f.add&&w.add===f.add?' hi':''}">+${w.add}</span><span class="tag sk${f.skill&&w.skill===f.skill?' hi':''}">◆${w.skill}</span></div></div>`;
+    }).join(''):`<div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--dim);padding:4px 0;letter-spacing:.08em">NO MATCH</div>`;
+    const tc=tgt.map(w=>`<div class="tgt-chip"><span class="rtag ${rc(w.rarity)}" style="font-size:8px">${w.rarity}</span>${w.name}</div>`).join('');
+    html+=`<div class="area-sec" style="border-color:${col.bd}">
+      <div class="area-hdr" style="background:${col.bg};border-bottom-color:${col.bd}">
+        <span style="font-size:10px;color:${col.tx};font-family:'Share Tech Mono',monospace">▶</span>
+        <span class="area-hdr-name" style="color:${col.tx}">${area}</span>
+        <span class="area-cnt" style="background:${col.bg};color:${col.tx};border:1px solid ${col.bd}">${tgt.length} TARGETS</span>
+      </div>
+      <div class="tgt-strip"><div class="tgt-label">TARGET WEAPONS</div><div class="tgt-chips">${tc}</div></div>
+      <div class="base-sum"><div class="base-sum-label">BASE STAT DIST. // ハイライト＝ターゲットの基礎効果</div><div class="base-grid">${bgrid}</div></div>
+      <div class="eff-bar">
+        <div class="eff-row"><span class="eff-row-lbl">付加絞込</span>${ac}</div>
+        <div class="eff-row"><span class="eff-row-lbl">スキル絞込</span>${sc}</div>
+      </div>
+      <div class="farm-list">
+        <div class="farm-label">ADDITIONAL DROPS // ${f.add||f.skill?farm.length+' MATCH':others.length+' TOTAL'}</div>
+        ${fc}
+      </div>
+    </div>`;
+  });
+  if(!html)html='<div class="empty-msg"><div class="ei">◈</div>選択した武器がいずれのエリアでもドロップしません</div>';
+  c.innerHTML=html;
+  c.querySelectorAll('.eff-chip').forEach(ch=>ch.addEventListener('click',()=>{af[ch.dataset.area][ch.dataset.t]=ch.dataset.v;renderArea();}));
+}
+
+function renderSolver(){renderWL();renderChips();renderArea();}
+document.getElementById('clearSelBtn').addEventListener('click',()=>{selIds.clear();renderSolver();});
+
+// REVERSE
+function renderRev(){
+  const base=document.getElementById('r-base').value;
+  const add=document.getElementById('r-add').value;
+  const skill=document.getElementById('r-skill').value;
+  const c=document.getElementById('reverseResults');
+  if(!base){c.innerHTML='<div class="empty-msg"><div class="ei">◈</div>基礎効果を選択してください</div>';return;}
+  const ar=add?1:0,sr=skill?1:0;
+  const scored=WEAPONS.map(w=>{const bh=w.base===base?1:0,ah=add&&w.add===add?1:0,sh=skill&&w.skill===skill?1:0;return{...w,bh,ah,sh,tot:bh+ah+sh};});
+  const full=scored.filter(w=>w.bh&&w.ah>=ar&&w.sh>=sr);
+  const part=scored.filter(w=>w.bh&&!(w.ah>=ar&&w.sh>=sr));
+  full.sort((a,b)=>b.tot-a.tot);part.sort((a,b)=>b.tot-a.tot);
+  const sc=t=>t>=3?'sc3':t>=2?'sc2':'sc1';
+  const sl=w=>{const p=[];if(w.bh)p.push('BASE');if(w.ah)p.push('ADD');if(w.sh)p.push('SKILL');return p.join('+') ||'—';};
+  const card=w=>`<div class="rcard${w.bh&&w.ah>=ar&&w.sh>=sr?' pf':''}">
+    <div class="rcard-top"><span class="rtag ${rc(w.rarity)}">${w.rarity}</span><span class="rcard-name">${w.name}</span><span class="rscore ${sc(w.tot)}">${sl(w)}</span></div>
+    <div class="rcard-tags"><span class="tag tp">${w.type}</span><span class="tag bs${w.bh?' hi':''}">◇${w.base}</span><span class="tag ad${w.ah?' hi':''}">+${w.add}</span><span class="tag sk${w.sh?' hi':''}">◆${w.skill}</span></div>
+    <div class="rcard-areas">${AREAS.map(a=>`<span class="adot ${w.areas[a]?'yes':'no'}">${AS[a]}</span>`).join('')}</div>
+  </div>`;
+  const ttl=add||skill?'FULL MATCH // 基礎＋付加＋スキル':'BASE MATCH // 基礎効果一致';
+  let html=`<div class="rev-sec"><div class="rev-sec-hdr full-hdr"><span class="rev-sec-title">◈ ${ttl}</span><span class="rev-sec-cnt">${full.length}</span></div><div class="rev-cards">${full.length?full.map(card).join(''):'<div class="empty-msg" style="padding:20px"><div class="ei">◈</div>NO MATCH</div>'}</div></div>`;
+  if((add||skill)&&part.length)html+=`<div class="rev-sec"><div class="rev-sec-hdr part-hdr"><span class="rev-sec-title">◇ PARTIAL // 基礎一致・付加またはスキルが異なる</span><span class="rev-sec-cnt">${part.length}</span></div><div class="rev-cards">${part.map(card).join('')}</div></div>`;
+  c.innerHTML=html;
+}
+['r-base','r-add','r-skill'].forEach(id=>document.getElementById(id).addEventListener('change',renderRev));
+document.getElementById('r-clearBtn').addEventListener('click',()=>{
+  ['r-base','r-add','r-skill'].forEach(id=>document.getElementById(id).value='');renderRev();
+});
+
+// ============================================================
+// INVENTORY（手持ち基質リスト）
+// ============================================================
+let inventory = [];
+let nextInvId = 1;
+
+function saveInv(){
+  try{ localStorage.setItem('efInv', JSON.stringify(inventory)); }catch(e){}
+}
+function loadInv(){
+  try{
+    const d = localStorage.getItem('efInv');
+    if(d){ inventory = JSON.parse(d); nextInvId = Math.max(...inventory.map(i=>i.id),0)+1; }
+  }catch(e){}
+}
+
+function renderInv(){
+  const list = document.getElementById('inv-list');
+  const empty = document.getElementById('inv-empty');
+  document.getElementById('inv-count').textContent = inventory.length + ' ITEMS';
+  if(!inventory.length){ list.innerHTML=''; empty.style.display='block'; return; }
+  empty.style.display='none';
+  list.innerHTML = inventory.map(item=>`
+    <div style="
+      background:var(--bg3);border:1px solid var(--border);border-radius:1px;
+      padding:8px 10px;margin-bottom:4px;border-left:2px solid var(--accent2);
+      animation:fu .2s ease;
+    ">
+      <div style="display:flex;align-items:center;gap:6px;margin-bottom:5px">
+        <div style="display:flex;flex-wrap:wrap;gap:3px;flex:1">
+          ${item.base?`<span class="tag bs">◇${item.base}</span>`:''}
+          ${item.add?`<span class="tag ad">+${item.add}</span>`:''}
+          ${item.skill?`<span class="tag sk">◆${item.skill}</span>`:''}
+        </div>
+        <button data-del="${item.id}" style="
+          background:none;border:1px solid var(--border2);border-radius:1px;
+          color:var(--dim);font-size:10px;cursor:pointer;padding:2px 7px;
+          font-family:'Share Tech Mono',monospace;flex-shrink:0;
+        ">DEL</button>
+      </div>
+      ${item.memo?`<div style="font-size:10px;color:var(--dim);font-family:'Share Tech Mono',monospace;letter-spacing:.05em">▸ ${item.memo}</div>`:''}
+    </div>`).join('');
+  list.querySelectorAll('[data-del]').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      inventory = inventory.filter(i=>i.id!==parseInt(btn.dataset.del));
+      saveInv(); renderInv();
+    });
+  });
+}
+
+document.getElementById('inv-addBtn').addEventListener('click',()=>{
+  const base  = document.getElementById('inv-base').value;
+  const add   = document.getElementById('inv-add').value;
+  const skill = document.getElementById('inv-skill').value;
+  const memo  = document.getElementById('inv-memo').value.trim();
+  if(!base && !add && !skill){ return; }
+  inventory.push({ id: nextInvId++, base, add, skill, memo });
+  saveInv(); renderInv();
+  // フォームリセット
+  ['inv-base','inv-add','inv-skill'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('inv-memo').value='';
+});
+
+// エクスポート
+document.getElementById('inv-exportBtn').addEventListener('click',()=>{
+  if(!inventory.length){ return; }
+  const blob = new Blob([JSON.stringify(inventory,null,2)],{type:'application/json'});
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href=url; a.download=`essence-list-${new Date().toISOString().slice(0,10)}.json`;
+  a.click(); URL.revokeObjectURL(url);
+});
+
+// インポート
+document.getElementById('inv-importFile').addEventListener('change',e=>{
+  const file=e.target.files[0]; if(!file)return;
+  const reader=new FileReader();
+  reader.onload=ev=>{
+    try{
+      const parsed=JSON.parse(ev.target.result);
+      if(!Array.isArray(parsed))throw new Error();
+      const existIds=new Set(inventory.map(i=>i.id));
+      parsed.forEach(item=>{
+        if(!item.base&&!item.add&&!item.skill)return;
+        if(existIds.has(item.id)) item.id=nextInvId++;
+        if(item.id>=nextInvId) nextInvId=item.id+1;
+        existIds.add(item.id);
+        inventory.push(item);
+      });
+      saveInv(); renderInv();
+    }catch(err){ alert('読み込みに失敗しました'); }
+    e.target.value='';
+  };
+  reader.readAsText(file);
+});
+
+// SEARCH
+const sS={rar:new Set(),tp:new Set(),bs:new Set(),ar:new Set()};
+let sSortKey='rarity',sSortAsc=false;
+function sSortW(list){
+  const ro={"★6":0,"★5":1,"★4":2};
+  return [...list].sort((a,b)=>{
+    let v=0;
+    if(sSortKey==='rarity'){v=(ro[a.rarity]||0)-(ro[b.rarity]||0);if(!v)v=a.name.localeCompare(b.name,'ja');}
+    else if(sSortKey==='type'){v=TYPE_ORDER.indexOf(a.type)-TYPE_ORDER.indexOf(b.type);if(!v)v=(ro[a.rarity]||0)-(ro[b.rarity]||0);}
+    return sSortAsc?v:-v;
+  });
+}
+function renderSearch(){
+  const q=document.getElementById('s-name').value.trim();
+  const av=document.getElementById('s-add').value,sv=document.getElementById('s-skill').value;
+  const res=sSortW(WEAPONS.filter(w=>{
+    if(q&&!w.name.includes(q))return false;
+    if(sS.rar.size&&!sS.rar.has(w.rarity))return false;
+    if(sS.tp.size&&!sS.tp.has(w.type))return false;
+    if(sS.bs.size&&!sS.bs.has(w.base))return false;
+    if(av&&w.add!==av)return false;
+    if(sv&&w.skill!==sv)return false;
+    if(sS.ar.size){for(const a of sS.ar){if(!w.areas[a])return false;}}
+    return true;
+  }));
+  document.getElementById('s-count').textContent=res.length;
+  document.getElementById('s-selcount').textContent=selIds.size+' SELECTED';
+  const g=document.getElementById('s-grid'),n=document.getElementById('s-nores');
+  if(!res.length){g.innerHTML='';n.style.display='block';return;}
+  n.style.display='none';
+  g.innerHTML=res.map(w=>`
+    <div class="wl-item${selIds.has(w.id)?' selected':''}" data-id="${w.id}" style="margin-bottom:4px;align-items:flex-start;padding:8px 10px">
+      <span class="rtag ${rc(w.rarity)}" style="margin-top:2px">${w.rarity}</span>
+      <div style="flex:1">
+        <div style="font-size:12px;font-weight:700;letter-spacing:.02em;margin-bottom:5px">${w.name}</div>
+        <div style="display:flex;flex-wrap:wrap;gap:3px">
+          <span class="tag tp">${w.type}</span>
+          <span class="tag bs">◇${w.base}</span>
+          <span class="tag ad">+${w.add}</span>
+          <span class="tag sk">◆${w.skill}</span>
+        </div>
+      </div>
+      <span class="wl-chk" style="margin-top:2px">${selIds.has(w.id)?'✓':''}</span>
+    </div>`).join('');
+  g.querySelectorAll('.wl-item').forEach(e=>e.addEventListener('click',()=>{
+    const id=parseInt(e.dataset.id);
+    selIds.has(id)?selIds.delete(id):selIds.add(id);
+    renderSearch();renderChips();renderArea();
+  }));
+}
+function setupChips(id,set){
+  document.getElementById(id).addEventListener('click',e=>{
+    const ch=e.target.closest('.chip');if(!ch)return;
+    const v=ch.dataset.val;
+    set.has(v)?(set.delete(v),ch.classList.remove('active')):(set.add(v),ch.classList.add('active'));
+    renderSearch();
+  });
+}
+setupChips('s-rarity',sS.rar);setupChips('s-type',sS.tp);setupChips('s-base',sS.bs);setupChips('s-area',sS.ar);
+document.getElementById('s-add').addEventListener('change',renderSearch);
+document.getElementById('s-skill').addEventListener('change',renderSearch);
+document.getElementById('s-name').addEventListener('input',renderSearch);
+document.getElementById('s-reset').addEventListener('click',()=>{
+  sS.rar.clear();sS.tp.clear();sS.bs.clear();sS.ar.clear();
+  document.querySelectorAll('#page-search .chip').forEach(c=>c.classList.remove('active'));
+  document.getElementById('s-add').value='';document.getElementById('s-skill').value='';document.getElementById('s-name').value='';
+  renderSearch();
+});
+document.querySelectorAll('[data-sort]').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    const k=btn.dataset.sort;
+    if(sSortKey===k)sSortAsc=!sSortAsc;else{sSortKey=k;sSortAsc=false;}
+    document.querySelectorAll('[data-sort]').forEach(b=>b.classList.toggle('active',b.dataset.sort===sSortKey));
+    ['rarity','type'].forEach(k2=>{
+      const el=document.getElementById('sarr-'+k2);
+      if(el)el.textContent=k2===sSortKey?(sSortAsc?'↑':'↓'):'';
+    });
+    renderSearch();
+  });
+});
+
+// BOTTOM NAV
+document.querySelectorAll('.bnav-btn').forEach(btn=>btn.addEventListener('click',()=>{
+  document.querySelectorAll('.bnav-btn').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('page-'+btn.dataset.tab).classList.add('active');
+}));
+
+loadInv();
+renderSolver();renderSearch();renderInv();
+
+// PWA Service Worker登録
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.register('sw.js').catch(()=>{});
+}
+</script>
+</body>
+</html>

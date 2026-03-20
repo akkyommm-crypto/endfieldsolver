@@ -1,0 +1,24 @@
+{
+  "name": "基質同時厳選ツール",
+  "short_name": "基質厳選",
+  "description": "Arknights Endfield 基質同時厳選ツール",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#07090d",
+  "theme_color": "#07090d",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
