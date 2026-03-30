@@ -412,7 +412,7 @@ input[type=text]::placeholder{color:var(--dim);}
     <div class="hlogo-mark"><div class="hlogo-mark-inner"></div></div>
     <div class="htitle-wrap">
       <div class="htitle">基質同時厳選ツール</div>
-      <div class="htitle-sub">ENDFIELD ESSENCE SOLVER v1.0</div>
+      <div class="htitle-sub">ENDFIELD ESSENCE SOLVER v1.2</div>
     </div>
   </div>
   <div class="hstatus">
@@ -599,7 +599,7 @@ input[type=text]::placeholder{color:var(--dim);}
           <div class="chip-row" id="s-area">
             <div class="chip" data-val="中枢エリア">中枢</div><div class="chip" data-val="源石研究パーク">源石</div>
             <div class="chip" data-val="鉱山エリア">鉱山</div><div class="chip" data-val="エネルギー高地">ENG</div>
-            <div class="chip" data-val="武陵城">武陵城</div>
+            <div class="chip" data-val="武陵城">武陵城</div><div class="chip" data-val="清波砦">清波砦</div>
           </div>
         </div>
         <div class="field"><span class="field-label">ソート</span>
@@ -627,70 +627,72 @@ input[type=text]::placeholder{color:var(--dim);}
 
 <script>
 const WEAPONS=[
-  {id:1,rarity:"★6",name:"フレイムフォージ",type:"片手剣",base:"知性",add:"攻撃力",skill:"夜幕",areas:{中枢エリア:false,源石研究パーク:false,鉱山エリア:false,エネルギー高地:false,武陵城:true}},
-  {id:2,rarity:"★6",name:"大願",type:"片手剣",base:"敏捷",add:"攻撃力",skill:"付術",areas:{中枢エリア:false,源石研究パーク:true,鉱山エリア:false,エネルギー高地:true,武陵城:false}},
-  {id:3,rarity:"★6",name:"不知帰",type:"片手剣",base:"意志",add:"攻撃力",skill:"流回",areas:{中枢エリア:true,源石研究パーク:false,鉱山エリア:false,エネルギー高地:true,武陵城:true}},
-  {id:4,rarity:"★6",name:"テルミット・カッター",type:"片手剣",base:"意志",add:"攻撃力",skill:"流回",areas:{中枢エリア:true,源石研究パーク:false,鉱山エリア:false,エネルギー高地:true,武陵城:true}},
-  {id:5,rarity:"★6",name:"ダークトーチ",type:"片手剣",base:"知性",add:"灼熱ダメージ",skill:"付術",areas:{中枢エリア:false,源石研究パーク:false,鉱山エリア:true,エネルギー高地:true,武陵城:false}},
-  {id:6,rarity:"★6",name:"フーヤオ",type:"片手剣",base:"メイン能力",add:"会心率",skill:"夜幕",areas:{中枢エリア:false,源石研究パーク:false,鉱山エリア:true,エネルギー高地:false,武陵城:true}},
-  {id:7,rarity:"★6",name:"輝かしき名声",type:"片手剣",base:"メイン能力",add:"物理ダメージ",skill:"残虐",areas:{中枢エリア:false,源石研究パーク:false,鉱山エリア:true,エネルギー高地:true,武陵城:false}},
-  {id:8,rarity:"★6",name:"白夜新星",type:"片手剣",base:"メイン能力",add:"アーツ強度",skill:"付術",areas:{中枢エリア:false,源石研究パーク:false,鉱山エリア:true,エネルギー高地:true,武陵城:false}},
-  {id:9,rarity:"★6",name:"栄光の記憶",type:"片手剣",base:"敏捷",add:"会心率",skill:"夜幕",areas:{中枢エリア:false,源石研究パーク:false,鉱山エリア:true,エネルギー高地:false,武陵城:true}},
-  {id:10,rarity:"★6",name:"大雷斑",type:"大剣",base:"筋力",add:"HPアップ",skill:"治癒",areas:{中枢エリア:false,源石研究パーク:false,鉱山エリア:false,エネルギー高地:true,武陵城:true}},
-  {id:11,rarity:"★6",name:"グラヴェンガー",type:"大剣",base:"筋力",add:"攻撃力",skill:"噴発",areas:{中枢エリア:true,源石研究パーク:false,鉱山エリア:false,エネルギー高地:false,武陵城:true}},
-  {id:12,rarity:"★6",name:"鑑",type:"大剣",base:"メイン能力",add:"攻撃力",skill:"圧制",areas:{中枢エリア:true,源石研究パーク:true,鉱山エリア:false,エネルギー高地:false,武陵城:false}},
-  {id:13,rarity:"★6",name:"昔日の逸品",type:"大剣",base:"意志",add:"HPアップ",skill:"効率",areas:{中枢エリア:false,源石研究パーク:false,鉱山エリア:true,エネルギー高地:false,武陵城:false}},
-  {id:14,rarity:"★6",name:"破砕君王",type:"大剣",base:"筋力",add:"会心率",skill:"破砕",areas:{中枢エリア:false,源石研究パーク:false,鉱山エリア:false,エネルギー高地:true,武陵城:true}},
-  {id:15,rarity:"★6",name:"負山",type:"長柄武器",base:"敏捷",add:"物理ダメージ",skill:"効率",areas:{中枢エリア:false,源石研究パーク:true,鉱山エリア:true,エネルギー高地:false,武陵城:false}},
-  {id:16,rarity:"★6",name:"勇猛",type:"長柄武器",base:"敏捷",add:"物理ダメージ",skill:"巧技",areas:{中枢エリア:false,源石研究パーク:true,鉱山エリア:true,エネルギー高地:false,武陵城:false}},
-  {id:17,rarity:"★6",name:"J.E.T.",type:"長柄武器",base:"メイン能力",add:"攻撃力",skill:"圧制",areas:{中枢エリア:true,源石研究パーク:true,鉱山エリア:false,エネルギー高地:false,武陵城:false}},
-  {id:18,rarity:"★6",name:"芸術の独裁者",type:"拳銃",base:"知性",add:"会心率",skill:"切骨",areas:{中枢エリア:false,源石研究パーク:true,鉱山エリア:false,エネルギー高地:true,武陵城:true}},
-  {id:19,rarity:"★6",name:"ナビゲーター",type:"拳銃",base:"知性",add:"寒冷ダメージ",skill:"付術",areas:{中枢エリア:false,源石研究パーク:true,鉱山エリア:true,エネルギー高地:false,武陵城:false}},
-  {id:20,rarity:"★6",name:"楔",type:"拳銃",base:"メイン能力",add:"会心率",skill:"付術",areas:{中枢エリア:false,源石研究パーク:true,鉱山エリア:true,エネルギー高地:true,武陵城:false}},
-  {id:21,rarity:"★6",name:"同類共食",type:"拳銃",base:"メイン能力",add:"アーツダメージ",skill:"付術",areas:{中枢エリア:false,源石研究パーク:true,鉱山エリア:false,エネルギー高地:false,武陵城:false}},
-  {id:22,rarity:"★6",name:"落草",type:"拳銃",base:"敏捷",add:"攻撃力",skill:"噴発",areas:{中枢エリア:true,源石研究パーク:false,鉱山エリア:false,エネルギー高地:false,武陵城:true}},
-  {id:23,rarity:"★6",name:"望郷",type:"拳銃",base:"敏捷",add:"寒冷ダメージ",skill:"圧制",areas:{中枢エリア:true,源石研究パーク:true,鉱山エリア:true,エネルギー高地:false,武陵城:false}},
-  {id:24,rarity:"★6",name:"破壊ユニット",type:"アーツユニット",base:"メイン能力",add:"アーツ強度",skill:"噴発",areas:{中枢エリア:true,源石研究パーク:false,鉱山エリア:true,エネルギー高地:false,武陵城:false}},
-  {id:25,rarity:"★6",name:"蒼星の囁き",type:"アーツユニット",base:"知性",add:"回復効率",skill:"付術",areas:{中枢エリア:false,源石研究パーク:false,鉱山エリア:true,エネルギー高地:true,武陵城:false}},
-  {id:26,rarity:"★6",name:"騎士精神",type:"アーツユニット",base:"意志",add:"HPアップ",skill:"治癒",areas:{中枢エリア:false,源石研究パーク:false,鉱山エリア:false,エネルギー高地:true,武陵城:true}},
-  {id:27,rarity:"★6",name:"使命必達",type:"アーツユニット",base:"意志",add:"必殺技効率",skill:"追襲",areas:{中枢エリア:true,源石研究パーク:true,鉱山エリア:false,エネルギー高地:false,武陵城:false}},
-  {id:28,rarity:"★6",name:"遺忘",type:"アーツユニット",base:"知性",add:"アーツダメージ",skill:"夜幕",areas:{中枢エリア:false,源石研究パーク:false,鉱山エリア:false,エネルギー高地:false,武陵城:true}},
-  {id:29,rarity:"★6",name:"作品：蝕跡",type:"アーツユニット",base:"意志",add:"自然ダメージ",skill:"圧制",areas:{中枢エリア:true,源石研究パーク:true,鉱山エリア:true,エネルギー高地:false,武陵城:false}},
-  {id:30,rarity:"★5",name:"鋼鉄余音",type:"片手剣",base:"敏捷",add:"物理ダメージ",skill:"巧技",areas:{中枢エリア:false,源石研究パーク:true,鉱山エリア:true,エネルギー高地:false,武陵城:false}},
-  {id:31,rarity:"★5",name:"堅城鋳造者",type:"片手剣",base:"知性",add:"必殺技効率",skill:"昂揚",areas:{中枢エリア:false,源石研究パーク:true,鉱山エリア:false,エネルギー高地:false,武陵城:false}},
-  {id:32,rarity:"★5",name:"フィンチェイサー3.0",type:"片手剣",base:"筋力",add:"寒冷ダメージ",skill:"圧制",areas:{中枢エリア:true,源石研究パーク:true,鉱山エリア:true,エネルギー高地:false,武陵城:false}},
-  {id:33,rarity:"★5",name:"抑止",type:"片手剣",base:"敏捷",add:"物理ダメージ",skill:"夜幕",areas:{中枢エリア:false,源石研究パーク:false,鉱山エリア:true,エネルギー高地:false,武陵城:false}},
-  {id:34,rarity:"★5",name:"十二問",type:"片手剣",base:"敏捷",add:"攻撃力",skill:"付術",areas:{中枢エリア:false,源石研究パーク:true,鉱山エリア:false,エネルギー高地:true,武陵城:false}},
-  {id:35,rarity:"★5",name:"O.B.J.軽刃",type:"片手剣",base:"敏捷",add:"攻撃力",skill:"流回",areas:{中枢エリア:true,源石研究パーク:false,鉱山エリア:false,エネルギー高地:true,武陵城:true}},
-  {id:36,rarity:"★5",name:"探龍",type:"大剣",base:"筋力",add:"必殺技効率",skill:"噴発",areas:{中枢エリア:true,源石研究パーク:false,鉱山エリア:false,エネルギー高地:false,武陵城:true}},
-  {id:37,rarity:"★5",name:"千古恒常",type:"大剣",base:"筋力",add:"アーツ強度",skill:"残虐",areas:{中枢エリア:false,源石研究パーク:false,鉱山エリア:true,エネルギー高地:true,武陵城:false}},
-  {id:38,rarity:"★5",name:"最期の声",type:"大剣",base:"筋力",add:"HPアップ",skill:"治癒",areas:{中枢エリア:false,源石研究パーク:false,鉱山エリア:false,エネルギー高地:true,武陵城:true}},
-  {id:39,rarity:"★5",name:"O.B.J.重責",type:"大剣",base:"筋力",add:"HPアップ",skill:"効率",areas:{中枢エリア:false,源石研究パーク:false,鉱山エリア:true,エネルギー高地:false,武陵城:false}},
-  {id:40,rarity:"★5",name:"正義嵌合",type:"長柄武器",base:"筋力",add:"必殺技効率",skill:"残虐",areas:{中枢エリア:false,源石研究パーク:false,鉱山エリア:false,エネルギー高地:false,武陵城:true}},
-  {id:41,rarity:"★5",name:"O.B.J.鋭矛",type:"長柄武器",base:"意志",add:"物理ダメージ",skill:"付術",areas:{中枢エリア:false,源石研究パーク:true,鉱山エリア:true,エネルギー高地:true,武陵城:false}},
-  {id:42,rarity:"★5",name:"求心の槍",type:"長柄武器",base:"意志",add:"電磁ダメージ",skill:"圧制",areas:{中枢エリア:true,源石研究パーク:true,鉱山エリア:false,エネルギー高地:false,武陵城:false}},
-  {id:43,rarity:"★5",name:"作品：衆生",type:"拳銃",base:"敏捷",add:"アーツダメージ",skill:"付術",areas:{中枢エリア:false,源石研究パーク:true,鉱山エリア:false,エネルギー高地:false,武陵城:false}},
-  {id:44,rarity:"★5",name:"O.B.J.迅速",type:"拳銃",base:"敏捷",add:"必殺技効率",skill:"噴発",areas:{中枢エリア:true,源石研究パーク:false,鉱山エリア:false,エネルギー高地:false,武陵城:true}},
-  {id:45,rarity:"★5",name:"合理的決別",type:"拳銃",base:"筋力",add:"灼熱ダメージ",skill:"追襲",areas:{中枢エリア:true,源石研究パーク:false,鉱山エリア:false,エネルギー高地:true,武陵城:false}},
-  {id:46,rarity:"★5",name:"弔いの詩",type:"アーツユニット",base:"知性",add:"攻撃力",skill:"夜幕",areas:{中枢エリア:false,源石研究パーク:false,鉱山エリア:false,エネルギー高地:false,武陵城:true}},
-  {id:47,rarity:"★5",name:"術無",type:"アーツユニット",base:"意志",add:"必殺技効率",skill:"昂揚",areas:{中枢エリア:false,源石研究パーク:true,鉱山エリア:false,エネルギー高地:false,武陵城:false}},
-  {id:48,rarity:"★5",name:"荒野迷走",type:"アーツユニット",base:"知性",add:"電磁ダメージ",skill:"付術",areas:{中枢エリア:false,源石研究パーク:true,鉱山エリア:false,エネルギー高地:false,武陵城:false}},
-  {id:49,rarity:"★5",name:"布教の自由",type:"アーツユニット",base:"意志",add:"回復効率",skill:"治癒",areas:{中枢エリア:false,源石研究パーク:false,鉱山エリア:false,エネルギー高地:true,武陵城:true}},
-  {id:50,rarity:"★5",name:"O.B.J.術識",type:"アーツユニット",base:"知性",add:"アーツ強度",skill:"追襲",areas:{中枢エリア:true,源石研究パーク:false,鉱山エリア:false,エネルギー高地:true,武陵城:false}},
-  {id:51,rarity:"★4",name:"緊急設計",type:"片手剣",base:"敏捷",add:"物理ダメージ",skill:"制圧",areas:{中枢エリア:false,源石研究パーク:false,鉱山エリア:false,エネルギー高地:false,武陵城:false}},
-  {id:52,rarity:"★4",name:"潮流",type:"片手剣",base:"知性",add:"攻撃力",skill:"追襲",areas:{中枢エリア:true,源石研究パーク:true,鉱山エリア:false,エネルギー高地:true,武陵城:false}},
-  {id:53,rarity:"★4",name:"工業零点一",type:"大剣",base:"筋力",add:"攻撃力",skill:"制圧",areas:{中枢エリア:false,源石研究パーク:false,鉱山エリア:false,エネルギー高地:false,武陵城:false}},
-  {id:54,rarity:"★4",name:"鍛冶師",type:"大剣",base:"意志",add:"HPアップ",skill:"破砕",areas:{中枢エリア:false,源石研究パーク:false,鉱山エリア:false,エネルギー高地:true,武陵城:true}},
-  {id:55,rarity:"★4",name:"開拓者の道標",type:"長柄武器",base:"敏捷",add:"攻撃力",skill:"昂揚",areas:{中枢エリア:false,源石研究パーク:true,鉱山エリア:false,エネルギー高地:true,武陵城:false}},
-  {id:56,rarity:"★4",name:"アンゲロス・スレイヤー",type:"長柄武器",base:"意志",add:"アーツダメージ",skill:"制圧",areas:{中枢エリア:false,源石研究パーク:false,鉱山エリア:false,エネルギー高地:false,武陵城:false}},
-  {id:57,rarity:"★4",name:"ロアーガード",type:"拳銃",base:"知性",add:"攻撃力",skill:"制圧",areas:{中枢エリア:false,源石研究パーク:false,鉱山エリア:false,エネルギー高地:false,武陵城:false}},
-  {id:58,rarity:"★4",name:"長路",type:"拳銃",base:"筋力",add:"アーツダメージ",skill:"追襲",areas:{中枢エリア:true,源石研究パーク:true,鉱山エリア:false,エネルギー高地:false,武陵城:false}},
-  {id:59,rarity:"★4",name:"オート・ハイパーノヴァ",type:"アーツユニット",base:"知性",add:"アーツダメージ",skill:"昂揚",areas:{中枢エリア:false,源石研究パーク:true,鉱山エリア:false,エネルギー高地:false,武陵城:false}},
-  {id:60,rarity:"★4",name:"蛍光雷羽",type:"アーツユニット",base:"意志",add:"攻撃力",skill:"制圧",areas:{中枢エリア:false,源石研究パーク:false,鉱山エリア:false,エネルギー高地:false,武陵城:false}},
+  {id:1,rarity:"★6",name:"フレイムフォージ",type:"片手剣",base:"知性",add:"攻撃力",skill:"夜幕",areas:{中枢エリア:false,源石研究パーク:false,鉱山エリア:false,エネルギー高地:false,武陵城:true,清波砦:false}},
+  {id:2,rarity:"★6",name:"大願",type:"片手剣",base:"敏捷",add:"攻撃力",skill:"付術",areas:{中枢エリア:false,源石研究パーク:true,鉱山エリア:false,エネルギー高地:true,武陵城:false,清波砦:false}},
+  {id:3,rarity:"★6",name:"不知帰",type:"片手剣",base:"意志",add:"攻撃力",skill:"流回",areas:{中枢エリア:true,源石研究パーク:false,鉱山エリア:false,エネルギー高地:true,武陵城:true,清波砦:false}},
+  {id:4,rarity:"★6",name:"テルミット・カッター",type:"片手剣",base:"意志",add:"攻撃力",skill:"流回",areas:{中枢エリア:true,源石研究パーク:false,鉱山エリア:false,エネルギー高地:true,武陵城:true,清波砦:false}},
+  {id:5,rarity:"★6",name:"ダークトーチ",type:"片手剣",base:"知性",add:"灼熱ダメージ",skill:"付術",areas:{中枢エリア:false,源石研究パーク:false,鉱山エリア:true,エネルギー高地:true,武陵城:false,清波砦:false}},
+  {id:6,rarity:"★6",name:"フーヤオ",type:"片手剣",base:"メイン能力",add:"会心率",skill:"夜幕",areas:{中枢エリア:false,源石研究パーク:false,鉱山エリア:true,エネルギー高地:false,武陵城:true,清波砦:false}},
+  {id:7,rarity:"★6",name:"輝かしき名声",type:"片手剣",base:"メイン能力",add:"物理ダメージ",skill:"残虐",areas:{中枢エリア:false,源石研究パーク:false,鉱山エリア:true,エネルギー高地:true,武陵城:false,清波砦:false}},
+  {id:8,rarity:"★6",name:"白夜新星",type:"片手剣",base:"メイン能力",add:"アーツ強度",skill:"付術",areas:{中枢エリア:false,源石研究パーク:false,鉱山エリア:true,エネルギー高地:true,武陵城:false,清波砦:false}},
+  {id:9,rarity:"★6",name:"栄光の記憶",type:"片手剣",base:"敏捷",add:"会心率",skill:"夜幕",areas:{中枢エリア:false,源石研究パーク:false,鉱山エリア:true,エネルギー高地:false,武陵城:true,清波砦:false}},
+  {id:10,rarity:"★6",name:"大雷斑",type:"大剣",base:"筋力",add:"HPアップ",skill:"治癒",areas:{中枢エリア:false,源石研究パーク:false,鉱山エリア:false,エネルギー高地:true,武陵城:true,清波砦:true}},
+  {id:11,rarity:"★6",name:"グラヴェンガー",type:"大剣",base:"筋力",add:"攻撃力",skill:"噴発",areas:{中枢エリア:true,源石研究パーク:false,鉱山エリア:false,エネルギー高地:false,武陵城:true,清波砦:false}},
+  {id:12,rarity:"★6",name:"鑑",type:"大剣",base:"メイン能力",add:"攻撃力",skill:"圧制",areas:{中枢エリア:true,源石研究パーク:true,鉱山エリア:false,エネルギー高地:false,武陵城:false,清波砦:false}},
+  {id:13,rarity:"★6",name:"昔日の逸品",type:"大剣",base:"意志",add:"HPアップ",skill:"効率",areas:{中枢エリア:false,源石研究パーク:false,鉱山エリア:true,エネルギー高地:false,武陵城:false,清波砦:false}},
+  {id:14,rarity:"★6",name:"破砕君王",type:"大剣",base:"筋力",add:"会心率",skill:"破砕",areas:{中枢エリア:false,源石研究パーク:false,鉱山エリア:false,エネルギー高地:true,武陵城:true,清波砦:false}},
+  {id:15,rarity:"★6",name:"負山",type:"長柄武器",base:"敏捷",add:"物理ダメージ",skill:"効率",areas:{中枢エリア:false,源石研究パーク:true,鉱山エリア:true,エネルギー高地:false,武陵城:false,清波砦:false}},
+  {id:16,rarity:"★6",name:"勇猛",type:"長柄武器",base:"敏捷",add:"物理ダメージ",skill:"巧技",areas:{中枢エリア:false,源石研究パーク:true,鉱山エリア:true,エネルギー高地:false,武陵城:false,清波砦:true}},
+  {id:17,rarity:"★6",name:"J.E.T.",type:"長柄武器",base:"メイン能力",add:"攻撃力",skill:"圧制",areas:{中枢エリア:true,源石研究パーク:true,鉱山エリア:false,エネルギー高地:false,武陵城:false,清波砦:false}},
+  {id:18,rarity:"★6",name:"芸術の独裁者",type:"拳銃",base:"知性",add:"会心率",skill:"切骨",areas:{中枢エリア:false,源石研究パーク:true,鉱山エリア:false,エネルギー高地:true,武陵城:true,清波砦:false}},
+  {id:19,rarity:"★6",name:"ナビゲーター",type:"拳銃",base:"知性",add:"寒冷ダメージ",skill:"付術",areas:{中枢エリア:false,源石研究パーク:true,鉱山エリア:true,エネルギー高地:false,武陵城:false,清波砦:false}},
+  {id:20,rarity:"★6",name:"楔",type:"拳銃",base:"メイン能力",add:"会心率",skill:"付術",areas:{中枢エリア:false,源石研究パーク:true,鉱山エリア:true,エネルギー高地:true,武陵城:false,清波砦:false}},
+  {id:21,rarity:"★6",name:"同類共食",type:"拳銃",base:"メイン能力",add:"アーツダメージ",skill:"付術",areas:{中枢エリア:false,源石研究パーク:true,鉱山エリア:false,エネルギー高地:false,武陵城:false,清波砦:false}},
+  {id:22,rarity:"★6",name:"落草",type:"拳銃",base:"敏捷",add:"攻撃力",skill:"噴発",areas:{中枢エリア:true,源石研究パーク:false,鉱山エリア:false,エネルギー高地:false,武陵城:true,清波砦:false}},
+  {id:23,rarity:"★6",name:"望郷",type:"拳銃",base:"敏捷",add:"寒冷ダメージ",skill:"圧制",areas:{中枢エリア:true,源石研究パーク:true,鉱山エリア:true,エネルギー高地:false,武陵城:false,清波砦:true}},
+  {id:24,rarity:"★6",name:"破壊ユニット",type:"アーツユニット",base:"メイン能力",add:"アーツ強度",skill:"噴発",areas:{中枢エリア:true,源石研究パーク:false,鉱山エリア:true,エネルギー高地:false,武陵城:false,清波砦:true}},
+  {id:25,rarity:"★6",name:"蒼星の囁き",type:"アーツユニット",base:"知性",add:"回復効率",skill:"付術",areas:{中枢エリア:false,源石研究パーク:false,鉱山エリア:true,エネルギー高地:true,武陵城:false,清波砦:false}},
+  {id:26,rarity:"★6",name:"騎士精神",type:"アーツユニット",base:"意志",add:"HPアップ",skill:"治癒",areas:{中枢エリア:false,源石研究パーク:false,鉱山エリア:false,エネルギー高地:true,武陵城:true,清波砦:true}},
+  {id:27,rarity:"★6",name:"使命必達",type:"アーツユニット",base:"意志",add:"必殺技効率",skill:"追襲",areas:{中枢エリア:true,源石研究パーク:true,鉱山エリア:false,エネルギー高地:false,武陵城:false,清波砦:false}},
+  {id:28,rarity:"★6",name:"遺忘",type:"アーツユニット",base:"知性",add:"アーツダメージ",skill:"夜幕",areas:{中枢エリア:false,源石研究パーク:false,鉱山エリア:false,エネルギー高地:false,武陵城:true,清波砦:true}},
+  {id:29,rarity:"★6",name:"作品：蝕跡",type:"アーツユニット",base:"意志",add:"自然ダメージ",skill:"圧制",areas:{中枢エリア:true,源石研究パーク:true,鉱山エリア:true,エネルギー高地:false,武陵城:false,清波砦:false}},
+  {id:30,rarity:"★5",name:"鋼鉄余音",type:"片手剣",base:"敏捷",add:"物理ダメージ",skill:"巧技",areas:{中枢エリア:false,源石研究パーク:true,鉱山エリア:true,エネルギー高地:false,武陵城:false,清波砦:true}},
+  {id:31,rarity:"★5",name:"堅城鋳造者",type:"片手剣",base:"知性",add:"必殺技効率",skill:"昂揚",areas:{中枢エリア:false,源石研究パーク:true,鉱山エリア:false,エネルギー高地:false,武陵城:false,清波砦:true}},
+  {id:32,rarity:"★5",name:"フィンチェイサー3.0",type:"片手剣",base:"筋力",add:"寒冷ダメージ",skill:"圧制",areas:{中枢エリア:true,源石研究パーク:true,鉱山エリア:true,エネルギー高地:false,武陵城:false,清波砦:true}},
+  {id:33,rarity:"★5",name:"仰止",type:"片手剣",base:"敏捷",add:"物理ダメージ",skill:"夜幕",areas:{中枢エリア:false,源石研究パーク:false,鉱山エリア:true,エネルギー高地:false,武陵城:false,清波砦:true}},
+  {id:34,rarity:"★5",name:"十二問",type:"片手剣",base:"敏捷",add:"攻撃力",skill:"付術",areas:{中枢エリア:false,源石研究パーク:true,鉱山エリア:false,エネルギー高地:true,武陵城:false,清波砦:false}},
+  {id:35,rarity:"★5",name:"O.B.J.軽刃",type:"片手剣",base:"敏捷",add:"攻撃力",skill:"流回",areas:{中枢エリア:true,源石研究パーク:false,鉱山エリア:false,エネルギー高地:true,武陵城:true,清波砦:false}},
+  {id:36,rarity:"★5",name:"探龍",type:"大剣",base:"筋力",add:"必殺技効率",skill:"噴発",areas:{中枢エリア:true,源石研究パーク:false,鉱山エリア:false,エネルギー高地:false,武陵城:true,清波砦:true}},
+  {id:37,rarity:"★5",name:"千古恒常",type:"大剣",base:"筋力",add:"アーツ強度",skill:"残虐",areas:{中枢エリア:false,源石研究パーク:false,鉱山エリア:true,エネルギー高地:true,武陵城:false,清波砦:false}},
+  {id:38,rarity:"★5",name:"最期の声",type:"大剣",base:"筋力",add:"HPアップ",skill:"治癒",areas:{中枢エリア:false,源石研究パーク:false,鉱山エリア:false,エネルギー高地:true,武陵城:true,清波砦:true}},
+  {id:39,rarity:"★5",name:"O.B.J.重責",type:"大剣",base:"筋力",add:"HPアップ",skill:"効率",areas:{中枢エリア:false,源石研究パーク:false,鉱山エリア:true,エネルギー高地:false,武陵城:false,清波砦:false}},
+  {id:40,rarity:"★5",name:"正義嵌合",type:"長柄武器",base:"筋力",add:"必殺技効率",skill:"残虐",areas:{中枢エリア:false,源石研究パーク:false,鉱山エリア:false,エネルギー高地:false,武陵城:true,清波砦:false}},
+  {id:41,rarity:"★5",name:"O.B.J.鋭矛",type:"長柄武器",base:"意志",add:"物理ダメージ",skill:"付術",areas:{中枢エリア:false,源石研究パーク:true,鉱山エリア:true,エネルギー高地:true,武陵城:false,清波砦:false}},
+  {id:42,rarity:"★5",name:"求心の槍",type:"長柄武器",base:"意志",add:"電磁ダメージ",skill:"圧制",areas:{中枢エリア:true,源石研究パーク:true,鉱山エリア:false,エネルギー高地:false,武陵城:false,清波砦:true}},
+  {id:43,rarity:"★5",name:"作品：衆生",type:"拳銃",base:"敏捷",add:"アーツダメージ",skill:"付術",areas:{中枢エリア:false,源石研究パーク:true,鉱山エリア:false,エネルギー高地:false,武陵城:false,清波砦:false}},
+  {id:44,rarity:"★5",name:"O.B.J.迅速",type:"拳銃",base:"敏捷",add:"必殺技効率",skill:"噴発",areas:{中枢エリア:true,源石研究パーク:false,鉱山エリア:false,エネルギー高地:false,武陵城:true,清波砦:true}},
+  {id:45,rarity:"★5",name:"合理的決別",type:"拳銃",base:"筋力",add:"灼熱ダメージ",skill:"追襲",areas:{中枢エリア:true,源石研究パーク:false,鉱山エリア:false,エネルギー高地:true,武陵城:false,清波砦:false}},
+  {id:46,rarity:"★5",name:"弔いの詩",type:"アーツユニット",base:"知性",add:"攻撃力",skill:"夜幕",areas:{中枢エリア:false,源石研究パーク:false,鉱山エリア:false,エネルギー高地:false,武陵城:true,清波砦:false}},
+  {id:47,rarity:"★5",name:"術無",type:"アーツユニット",base:"意志",add:"必殺技効率",skill:"昂揚",areas:{中枢エリア:false,源石研究パーク:true,鉱山エリア:false,エネルギー高地:false,武陵城:false,清波砦:true}},
+  {id:48,rarity:"★5",name:"荒野迷走",type:"アーツユニット",base:"知性",add:"電磁ダメージ",skill:"付術",areas:{中枢エリア:false,源石研究パーク:true,鉱山エリア:false,エネルギー高地:false,武陵城:false,清波砦:false}},
+  {id:49,rarity:"★5",name:"布教の自由",type:"アーツユニット",base:"意志",add:"回復効率",skill:"治癒",areas:{中枢エリア:false,源石研究パーク:false,鉱山エリア:false,エネルギー高地:true,武陵城:true,清波砦:true}},
+  {id:50,rarity:"★5",name:"O.B.J.術識",type:"アーツユニット",base:"知性",add:"アーツ強度",skill:"追襲",areas:{中枢エリア:true,源石研究パーク:false,鉱山エリア:false,エネルギー高地:true,武陵城:false,清波砦:false}},
+  {id:51,rarity:"★4",name:"顕鋒",type:"片手剣",base:"敏捷",add:"物理ダメージ",skill:"制圧",areas:{中枢エリア:false,源石研究パーク:false,鉱山エリア:false,エネルギー高地:false,武陵城:false,清波砦:false}},
+  {id:52,rarity:"★4",name:"潮流",type:"片手剣",base:"知性",add:"攻撃力",skill:"追襲",areas:{中枢エリア:true,源石研究パーク:true,鉱山エリア:false,エネルギー高地:true,武陵城:false,清波砦:false}},
+  {id:53,rarity:"★4",name:"工業零点一",type:"大剣",base:"筋力",add:"攻撃力",skill:"制圧",areas:{中枢エリア:false,源石研究パーク:false,鉱山エリア:false,エネルギー高地:false,武陵城:false,清波砦:false}},
+  {id:54,rarity:"★4",name:"鍛冶師",type:"大剣",base:"意志",add:"HPアップ",skill:"破砕",areas:{中枢エリア:false,源石研究パーク:false,鉱山エリア:false,エネルギー高地:true,武陵城:true,清波砦:true}},
+  {id:55,rarity:"★4",name:"開拓者の道標",type:"長柄武器",base:"敏捷",add:"攻撃力",skill:"昂揚",areas:{中枢エリア:false,源石研究パーク:true,鉱山エリア:false,エネルギー高地:true,武陵城:false,清波砦:false}},
+  {id:56,rarity:"★4",name:"アンゲロス・スレイヤー",type:"長柄武器",base:"意志",add:"アーツダメージ",skill:"制圧",areas:{中枢エリア:false,源石研究パーク:false,鉱山エリア:false,エネルギー高地:false,武陵城:false,清波砦:true}},
+  {id:57,rarity:"★4",name:"ロアーガード",type:"拳銃",base:"知性",add:"攻撃力",skill:"制圧",areas:{中枢エリア:false,源石研究パーク:false,鉱山エリア:false,エネルギー高地:false,武陵城:false,清波砦:false}},
+  {id:58,rarity:"★4",name:"長路",type:"拳銃",base:"筋力",add:"アーツダメージ",skill:"追襲",areas:{中枢エリア:true,源石研究パーク:true,鉱山エリア:false,エネルギー高地:false,武陵城:false,清波砦:false}},
+  {id:59,rarity:"★4",name:"オート・ハイパーノヴァ",type:"アーツユニット",base:"知性",add:"アーツダメージ",skill:"昂揚",areas:{中枢エリア:false,源石研究パーク:true,鉱山エリア:false,エネルギー高地:false,武陵城:false,清波砦:true}},
+  {id:60,rarity:"★4",name:"蛍光雷羽",type:"アーツユニット",base:"意志",add:"攻撃力",skill:"制圧",areas:{中枢エリア:false,源石研究パーク:false,鉱山エリア:false,エネルギー高地:false,武陵城:false,清波砦:false}},
+  // ── v1.1 追加 ──
+  {id:61,rarity:"★6",name:"狼緋",type:"片手剣",base:"敏捷",add:"会心率",skill:"切骨",areas:{中枢エリア:false,源石研究パーク:true,鉱山エリア:false,エネルギー高地:true,武陵城:true,清波砦:false}},
 ];
 
-const AREAS=["中枢エリア","源石研究パーク","鉱山エリア","エネルギー高地","武陵城"];
-const AS={"中枢エリア":"中枢","源石研究パーク":"源石","鉱山エリア":"鉱山","エネルギー高地":"ENG","武陵城":"武陵"};
+const AREAS=["中枢エリア","源石研究パーク","鉱山エリア","エネルギー高地","武陵城","清波砦"];
+const AS={"中枢エリア":"中枢","源石研究パーク":"源石","鉱山エリア":"鉱山","エネルギー高地":"ENG","武陵城":"武陵城","清波砦":"清波砦"};
 const BASES=["敏捷","筋力","意志","知性","メイン能力"];
 const TYPE_ORDER=["片手剣","大剣","長柄武器","拳銃","アーツユニット"];
 const AC={
@@ -699,6 +701,7 @@ const AC={
   "鉱山エリア":   {bg:"rgba(196,152,72,.08)", bd:"rgba(196,152,72,.3)", tx:"#c49848"},
   "エネルギー高地":{bg:"rgba(212,80,80,.08)",  bd:"rgba(212,80,80,.3)",  tx:"#d45050"},
   "武陵城":       {bg:"rgba(61,184,106,.08)",  bd:"rgba(61,184,106,.3)", tx:"#3db86a"},
+  "清波砦":       {bg:"rgba(58,184,200,.08)",  bd:"rgba(58,184,200,.3)", tx:"#3ab8c8"},
 };
 
 let selIds=new Set();
@@ -873,12 +876,10 @@ document.getElementById('inv-addBtn').addEventListener('click',()=>{
   if(!base && !add && !skill){ return; }
   inventory.push({ id: nextInvId++, base, add, skill, memo });
   saveInv(); renderInv();
-  // フォームリセット
   ['inv-base','inv-add','inv-skill'].forEach(id=>document.getElementById(id).value='');
   document.getElementById('inv-memo').value='';
 });
 
-// エクスポート
 document.getElementById('inv-exportBtn').addEventListener('click',()=>{
   if(!inventory.length){ return; }
   const blob = new Blob([JSON.stringify(inventory,null,2)],{type:'application/json'});
@@ -888,7 +889,6 @@ document.getElementById('inv-exportBtn').addEventListener('click',()=>{
   a.click(); URL.revokeObjectURL(url);
 });
 
-// インポート
 document.getElementById('inv-importFile').addEventListener('change',e=>{
   const file=e.target.files[0]; if(!file)return;
   const reader=new FileReader();
@@ -1003,7 +1003,6 @@ document.querySelectorAll('.bnav-btn').forEach(btn=>btn.addEventListener('click'
 loadInv();
 renderSolver();renderSearch();renderInv();
 
-// PWA Service Worker登録
 if('serviceWorker' in navigator){
   navigator.serviceWorker.register('sw.js').catch(()=>{});
 }
