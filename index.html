@@ -112,10 +112,10 @@ body{
   padding-bottom:env(safe-area-inset-bottom,0px);
 }
 .bnav-btn{
-  flex:1;padding:9px 4px 7px;
+  flex:1;padding:9px 2px 7px;
   display:flex;flex-direction:column;align-items:center;gap:2px;
   background:none;border:none;color:var(--dim);cursor:pointer;
-  font-family:'Noto Sans JP',sans-serif;font-size:9px;letter-spacing:.08em;
+  font-family:'Noto Sans JP',sans-serif;font-size:8px;letter-spacing:.04em;
   transition:all .15s;position:relative;
 }
 .bnav-btn::before{
@@ -599,7 +599,7 @@ input[type=text]::placeholder{color:var(--dim);}
           <div class="chip-row" id="s-area">
             <div class="chip" data-val="中枢エリア">中枢</div><div class="chip" data-val="源石研究パーク">源石</div>
             <div class="chip" data-val="鉱山エリア">鉱山</div><div class="chip" data-val="エネルギー高地">ENG</div>
-            <div class="chip" data-val="武陵城">武陵城</div><div class="chip" data-val="清波砦">清波砦</div>
+            <div class="chip" data-val="武陵城">武陵城</div><div class="chip" data-val="清波砦">清波砦</div><div class="chip" data-val="首礎">首礎</div>
           </div>
         </div>
         <div class="field"><span class="field-label">ソート</span>
@@ -617,92 +617,328 @@ input[type=text]::placeholder{color:var(--dim);}
     <div class="empty-msg" id="s-nores" style="display:none"><div class="ei">◈</div>NO RESULTS</div>
   </div></div>
 
+  <!-- ── AREA LIST ── -->
+  <div class="page" id="page-arealist"><div class="wrap">
+
+    <!-- フィルター -->
+    <div class="panel">
+      <div class="panel-hdr">
+        <span class="panel-hdr-label">効果で絞り込み</span>
+        <span class="panel-hdr-right" id="al-total">全エリア表示</span>
+      </div>
+      <div class="panel-body" style="display:flex;flex-direction:column;gap:8px">
+        <div class="field">
+          <span class="field-label">基礎効果</span>
+          <select id="al-base">
+            <option value="">すべて</option>
+            <option>敏捷</option><option>筋力</option><option>意志</option><option>知性</option><option>メイン能力</option>
+          </select>
+        </div>
+        <div class="field">
+          <span class="field-label">付加効果</span>
+          <select id="al-add">
+            <option value="">すべて</option>
+            <option>攻撃力</option><option>HPアップ</option><option>物理ダメージ</option><option>灼熱ダメージ</option>
+            <option>電磁ダメージ</option><option>寒冷ダメージ</option><option>自然ダメージ</option><option>アーツ強度</option>
+            <option>必殺技効率</option><option>アーツダメージ</option><option>会心率</option><option>回復効率</option>
+          </select>
+        </div>
+        <div class="field">
+          <span class="field-label">スキル効果</span>
+          <select id="al-skill">
+            <option value="">すべて</option>
+            <option>夜幕</option><option>付術</option><option>流回</option><option>圧制</option><option>噴発</option>
+            <option>追襲</option><option>破砕</option><option>残虐</option><option>巧技</option><option>昂揚</option>
+            <option>治癒</option><option>効率</option><option>切骨</option><option>制圧</option><option>強攻</option>
+          </select>
+        </div>
+        <button class="reset-btn" id="al-reset">[ CLEAR FILTER ]</button>
+      </div>
+    </div>
+
+    <div id="al-sections"></div>
+
+  <!-- ── HELP ── -->
+  <div class="page" id="page-help"><div class="wrap">
+
+    <div class="panel">
+      <div class="panel-hdr"><span class="panel-hdr-label">このツールについて</span></div>
+      <div class="panel-body" style="font-size:12px;line-height:1.8;color:var(--text)">
+        アークナイツ：エンドフィールドの基質厳選を効率化するツールです。<br>
+        複数の武器を同時に厳選する際に、どのエリアで何を狙えばいいかを整理できます。
+      </div>
+    </div>
+
+    <!-- SOLVER -->
+    <div class="panel">
+      <div class="panel-hdr"><span class="panel-hdr-label">◈ SOLVER</span></div>
+      <div class="panel-body" style="display:flex;flex-direction:column;gap:10px">
+        <div style="font-size:12px;line-height:1.8;color:var(--text)">
+          欲しい武器を複数選択すると、エリアごとに「どの武器を同時に狙えるか」を表示します。
+        </div>
+        <div style="background:var(--bg3);border:1px solid var(--border);border-radius:1px;padding:10px;display:flex;flex-direction:column;gap:6px">
+          <div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--accent);letter-spacing:.15em">STEP 1</div>
+          <div style="font-size:12px;color:var(--text)">リストから欲しい武器をタップして選択（複数OK）</div>
+          <div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--accent);letter-spacing:.15em;margin-top:4px">STEP 2</div>
+          <div style="font-size:12px;color:var(--text)">エリアごとに「TARGET WEAPONS」が表示される</div>
+          <div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--accent);letter-spacing:.15em;margin-top:4px">STEP 3</div>
+          <div style="font-size:12px;color:var(--text)">付加絞込・スキル絞込で狙う基質をさらに絞り込める</div>
+          <div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--accent);letter-spacing:.15em;margin-top:4px">STEP 4</div>
+          <div style="font-size:12px;color:var(--text)">「ADDITIONAL DROPS」に同じエリアで同時に狙える他の武器が表示される</div>
+        </div>
+        <div style="background:rgba(212,168,67,.06);border:1px solid rgba(212,168,67,.2);border-radius:1px;padding:8px;font-size:11px;color:var(--dim)">
+          💡 武器選択タブからレア度・種類・効果でフィルターして選ぶと便利です
+        </div>
+      </div>
+    </div>
+
+    <!-- 逆引き -->
+    <div class="panel">
+      <div class="panel-hdr"><span class="panel-hdr-label">⚗ 逆引き</span></div>
+      <div class="panel-body" style="display:flex;flex-direction:column;gap:10px">
+        <div style="font-size:12px;line-height:1.8;color:var(--text)">
+          手持ちの基質（基礎・付加・スキル）から、どの武器に使えるかを検索します。
+        </div>
+        <div style="background:var(--bg3);border:1px solid var(--border);border-radius:1px;padding:10px;display:flex;flex-direction:column;gap:6px">
+          <div style="font-size:12px;color:var(--text)"><span style="color:var(--accent);font-family:'Share Tech Mono',monospace">FULL MATCH</span> … 基礎＋付加＋スキルが全て一致する武器</div>
+          <div style="font-size:12px;color:var(--text)"><span style="color:var(--dim);font-family:'Share Tech Mono',monospace">PARTIAL</span> … 基礎は一致するが付加またはスキルが異なる武器</div>
+        </div>
+        <div style="font-size:12px;line-height:1.8;color:var(--text)">
+          下部の「手持ち基質リスト」に所持している基質を登録しておくと、どの武器を狙えるか管理できます。エクスポート・インポートでバックアップも可能です。
+        </div>
+      </div>
+    </div>
+
+    <!-- エリア -->
+    <div class="panel">
+      <div class="panel-hdr"><span class="panel-hdr-label">◧ エリア</span></div>
+      <div class="panel-body" style="display:flex;flex-direction:column;gap:10px">
+        <div style="font-size:12px;line-height:1.8;color:var(--text)">
+          エリアごとにドロップする武器の一覧と、出現する基質効果を確認できます。
+        </div>
+        <div style="background:var(--bg3);border:1px solid var(--border);border-radius:1px;padding:10px;display:flex;flex-direction:column;gap:6px">
+          <div style="font-size:12px;color:var(--text)">基礎・付加・スキルを選択すると、その効果が出るエリアだけに絞り込めます</div>
+          <div style="font-size:12px;color:var(--text)">例：「付加＝会心率」「スキル＝切骨」→ 両方出るエリアが表示される</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- データ管理 -->
+    <div class="panel">
+      <div class="panel-hdr"><span class="panel-hdr-label">// データ管理</span></div>
+      <div class="panel-body" style="display:flex;flex-direction:column;gap:8px;font-size:12px;line-height:1.8;color:var(--text)">
+        <div>このツールのデータは <code style="background:var(--bg3);padding:1px 5px;border-radius:2px;font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--accent)">index.html</code> 内のスクリプトに書かれています。</div>
+        <div style="background:var(--bg3);border:1px solid var(--border);border-radius:1px;padding:10px;display:flex;flex-direction:column;gap:6px">
+          <div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--green);letter-spacing:.15em">新規武器の追加</div>
+          <div style="font-size:11px;color:var(--dim)">WEAPONS_RAW の末尾コメント付近に1行追加。エリア情報は不要で、ステータスを書くだけで自動的に対応エリアが判定されます。</div>
+          <div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--cyan);letter-spacing:.15em;margin-top:4px">新規エリアの追加</div>
+          <div style="font-size:11px;color:var(--dim)">AREA_DEFS の末尾コメント付近に1ブロック追加。エリア名・カラー・出現効果（effects）を書くだけで自動的に対応武器が判定されます。</div>
+        </div>
+      </div>
+    </div>
+
+  </div></div>
+
 </div>
 
 <nav class="bottom-nav">
   <button class="bnav-btn active" data-tab="solver"><span class="bnav-ico">◈</span>SOLVER</button>
   <button class="bnav-btn" data-tab="reverse"><span class="bnav-ico">⚗</span>逆引き</button>
   <button class="bnav-btn" data-tab="search"><span class="bnav-ico">◉</span>武器選択</button>
+  <button class="bnav-btn" data-tab="arealist"><span class="bnav-ico">◧</span>エリア</button>
+  <button class="bnav-btn" data-tab="help"><span class="bnav-ico">？</span>使い方</button>
 </nav>
 
 <script>
-const WEAPONS=[
-  {id:1,rarity:"★6",name:"フレイムフォージ",type:"片手剣",base:"知性",add:"攻撃力",skill:"夜幕",areas:{中枢エリア:false,源石研究パーク:false,鉱山エリア:false,エネルギー高地:false,武陵城:true,清波砦:false}},
-  {id:2,rarity:"★6",name:"大願",type:"片手剣",base:"敏捷",add:"攻撃力",skill:"付術",areas:{中枢エリア:false,源石研究パーク:true,鉱山エリア:false,エネルギー高地:true,武陵城:false,清波砦:false}},
-  {id:3,rarity:"★6",name:"不知帰",type:"片手剣",base:"意志",add:"攻撃力",skill:"流回",areas:{中枢エリア:true,源石研究パーク:false,鉱山エリア:false,エネルギー高地:true,武陵城:true,清波砦:false}},
-  {id:4,rarity:"★6",name:"テルミット・カッター",type:"片手剣",base:"意志",add:"攻撃力",skill:"流回",areas:{中枢エリア:true,源石研究パーク:false,鉱山エリア:false,エネルギー高地:true,武陵城:true,清波砦:false}},
-  {id:5,rarity:"★6",name:"ダークトーチ",type:"片手剣",base:"知性",add:"灼熱ダメージ",skill:"付術",areas:{中枢エリア:false,源石研究パーク:false,鉱山エリア:true,エネルギー高地:true,武陵城:false,清波砦:false}},
-  {id:6,rarity:"★6",name:"フーヤオ",type:"片手剣",base:"メイン能力",add:"会心率",skill:"夜幕",areas:{中枢エリア:false,源石研究パーク:false,鉱山エリア:true,エネルギー高地:false,武陵城:true,清波砦:false}},
-  {id:7,rarity:"★6",name:"輝かしき名声",type:"片手剣",base:"メイン能力",add:"物理ダメージ",skill:"残虐",areas:{中枢エリア:false,源石研究パーク:false,鉱山エリア:true,エネルギー高地:true,武陵城:false,清波砦:false}},
-  {id:8,rarity:"★6",name:"白夜新星",type:"片手剣",base:"メイン能力",add:"アーツ強度",skill:"付術",areas:{中枢エリア:false,源石研究パーク:false,鉱山エリア:true,エネルギー高地:true,武陵城:false,清波砦:false}},
-  {id:9,rarity:"★6",name:"栄光の記憶",type:"片手剣",base:"敏捷",add:"会心率",skill:"夜幕",areas:{中枢エリア:false,源石研究パーク:false,鉱山エリア:true,エネルギー高地:false,武陵城:true,清波砦:false}},
-  {id:10,rarity:"★6",name:"大雷斑",type:"大剣",base:"筋力",add:"HPアップ",skill:"治癒",areas:{中枢エリア:false,源石研究パーク:false,鉱山エリア:false,エネルギー高地:true,武陵城:true,清波砦:true}},
-  {id:11,rarity:"★6",name:"グラヴェンガー",type:"大剣",base:"筋力",add:"攻撃力",skill:"噴発",areas:{中枢エリア:true,源石研究パーク:false,鉱山エリア:false,エネルギー高地:false,武陵城:true,清波砦:false}},
-  {id:12,rarity:"★6",name:"鑑",type:"大剣",base:"メイン能力",add:"攻撃力",skill:"圧制",areas:{中枢エリア:true,源石研究パーク:true,鉱山エリア:false,エネルギー高地:false,武陵城:false,清波砦:false}},
-  {id:13,rarity:"★6",name:"昔日の逸品",type:"大剣",base:"意志",add:"HPアップ",skill:"効率",areas:{中枢エリア:false,源石研究パーク:false,鉱山エリア:true,エネルギー高地:false,武陵城:false,清波砦:false}},
-  {id:14,rarity:"★6",name:"破砕君王",type:"大剣",base:"筋力",add:"会心率",skill:"破砕",areas:{中枢エリア:false,源石研究パーク:false,鉱山エリア:false,エネルギー高地:true,武陵城:true,清波砦:false}},
-  {id:15,rarity:"★6",name:"負山",type:"長柄武器",base:"敏捷",add:"物理ダメージ",skill:"効率",areas:{中枢エリア:false,源石研究パーク:true,鉱山エリア:true,エネルギー高地:false,武陵城:false,清波砦:false}},
-  {id:16,rarity:"★6",name:"勇猛",type:"長柄武器",base:"敏捷",add:"物理ダメージ",skill:"巧技",areas:{中枢エリア:false,源石研究パーク:true,鉱山エリア:true,エネルギー高地:false,武陵城:false,清波砦:true}},
-  {id:17,rarity:"★6",name:"J.E.T.",type:"長柄武器",base:"メイン能力",add:"攻撃力",skill:"圧制",areas:{中枢エリア:true,源石研究パーク:true,鉱山エリア:false,エネルギー高地:false,武陵城:false,清波砦:false}},
-  {id:18,rarity:"★6",name:"芸術の独裁者",type:"拳銃",base:"知性",add:"会心率",skill:"切骨",areas:{中枢エリア:false,源石研究パーク:true,鉱山エリア:false,エネルギー高地:true,武陵城:true,清波砦:false}},
-  {id:19,rarity:"★6",name:"ナビゲーター",type:"拳銃",base:"知性",add:"寒冷ダメージ",skill:"付術",areas:{中枢エリア:false,源石研究パーク:true,鉱山エリア:true,エネルギー高地:false,武陵城:false,清波砦:false}},
-  {id:20,rarity:"★6",name:"楔",type:"拳銃",base:"メイン能力",add:"会心率",skill:"付術",areas:{中枢エリア:false,源石研究パーク:true,鉱山エリア:true,エネルギー高地:true,武陵城:false,清波砦:false}},
-  {id:21,rarity:"★6",name:"同類共食",type:"拳銃",base:"メイン能力",add:"アーツダメージ",skill:"付術",areas:{中枢エリア:false,源石研究パーク:true,鉱山エリア:false,エネルギー高地:false,武陵城:false,清波砦:false}},
-  {id:22,rarity:"★6",name:"落草",type:"拳銃",base:"敏捷",add:"攻撃力",skill:"噴発",areas:{中枢エリア:true,源石研究パーク:false,鉱山エリア:false,エネルギー高地:false,武陵城:true,清波砦:false}},
-  {id:23,rarity:"★6",name:"望郷",type:"拳銃",base:"敏捷",add:"寒冷ダメージ",skill:"圧制",areas:{中枢エリア:true,源石研究パーク:true,鉱山エリア:true,エネルギー高地:false,武陵城:false,清波砦:true}},
-  {id:24,rarity:"★6",name:"破壊ユニット",type:"アーツユニット",base:"メイン能力",add:"アーツ強度",skill:"噴発",areas:{中枢エリア:true,源石研究パーク:false,鉱山エリア:true,エネルギー高地:false,武陵城:false,清波砦:true}},
-  {id:25,rarity:"★6",name:"蒼星の囁き",type:"アーツユニット",base:"知性",add:"回復効率",skill:"付術",areas:{中枢エリア:false,源石研究パーク:false,鉱山エリア:true,エネルギー高地:true,武陵城:false,清波砦:false}},
-  {id:26,rarity:"★6",name:"騎士精神",type:"アーツユニット",base:"意志",add:"HPアップ",skill:"治癒",areas:{中枢エリア:false,源石研究パーク:false,鉱山エリア:false,エネルギー高地:true,武陵城:true,清波砦:true}},
-  {id:27,rarity:"★6",name:"使命必達",type:"アーツユニット",base:"意志",add:"必殺技効率",skill:"追襲",areas:{中枢エリア:true,源石研究パーク:true,鉱山エリア:false,エネルギー高地:false,武陵城:false,清波砦:false}},
-  {id:28,rarity:"★6",name:"遺忘",type:"アーツユニット",base:"知性",add:"アーツダメージ",skill:"夜幕",areas:{中枢エリア:false,源石研究パーク:false,鉱山エリア:false,エネルギー高地:false,武陵城:true,清波砦:true}},
-  {id:29,rarity:"★6",name:"作品：蝕跡",type:"アーツユニット",base:"意志",add:"自然ダメージ",skill:"圧制",areas:{中枢エリア:true,源石研究パーク:true,鉱山エリア:true,エネルギー高地:false,武陵城:false,清波砦:false}},
-  {id:30,rarity:"★5",name:"鋼鉄余音",type:"片手剣",base:"敏捷",add:"物理ダメージ",skill:"巧技",areas:{中枢エリア:false,源石研究パーク:true,鉱山エリア:true,エネルギー高地:false,武陵城:false,清波砦:true}},
-  {id:31,rarity:"★5",name:"堅城鋳造者",type:"片手剣",base:"知性",add:"必殺技効率",skill:"昂揚",areas:{中枢エリア:false,源石研究パーク:true,鉱山エリア:false,エネルギー高地:false,武陵城:false,清波砦:true}},
-  {id:32,rarity:"★5",name:"フィンチェイサー3.0",type:"片手剣",base:"筋力",add:"寒冷ダメージ",skill:"圧制",areas:{中枢エリア:true,源石研究パーク:true,鉱山エリア:true,エネルギー高地:false,武陵城:false,清波砦:true}},
-  {id:33,rarity:"★5",name:"仰止",type:"片手剣",base:"敏捷",add:"物理ダメージ",skill:"夜幕",areas:{中枢エリア:false,源石研究パーク:false,鉱山エリア:true,エネルギー高地:false,武陵城:false,清波砦:true}},
-  {id:34,rarity:"★5",name:"十二問",type:"片手剣",base:"敏捷",add:"攻撃力",skill:"付術",areas:{中枢エリア:false,源石研究パーク:true,鉱山エリア:false,エネルギー高地:true,武陵城:false,清波砦:false}},
-  {id:35,rarity:"★5",name:"O.B.J.軽刃",type:"片手剣",base:"敏捷",add:"攻撃力",skill:"流回",areas:{中枢エリア:true,源石研究パーク:false,鉱山エリア:false,エネルギー高地:true,武陵城:true,清波砦:false}},
-  {id:36,rarity:"★5",name:"探龍",type:"大剣",base:"筋力",add:"必殺技効率",skill:"噴発",areas:{中枢エリア:true,源石研究パーク:false,鉱山エリア:false,エネルギー高地:false,武陵城:true,清波砦:true}},
-  {id:37,rarity:"★5",name:"千古恒常",type:"大剣",base:"筋力",add:"アーツ強度",skill:"残虐",areas:{中枢エリア:false,源石研究パーク:false,鉱山エリア:true,エネルギー高地:true,武陵城:false,清波砦:false}},
-  {id:38,rarity:"★5",name:"最期の声",type:"大剣",base:"筋力",add:"HPアップ",skill:"治癒",areas:{中枢エリア:false,源石研究パーク:false,鉱山エリア:false,エネルギー高地:true,武陵城:true,清波砦:true}},
-  {id:39,rarity:"★5",name:"O.B.J.重責",type:"大剣",base:"筋力",add:"HPアップ",skill:"効率",areas:{中枢エリア:false,源石研究パーク:false,鉱山エリア:true,エネルギー高地:false,武陵城:false,清波砦:false}},
-  {id:40,rarity:"★5",name:"正義嵌合",type:"長柄武器",base:"筋力",add:"必殺技効率",skill:"残虐",areas:{中枢エリア:false,源石研究パーク:false,鉱山エリア:false,エネルギー高地:false,武陵城:true,清波砦:false}},
-  {id:41,rarity:"★5",name:"O.B.J.鋭矛",type:"長柄武器",base:"意志",add:"物理ダメージ",skill:"付術",areas:{中枢エリア:false,源石研究パーク:true,鉱山エリア:true,エネルギー高地:true,武陵城:false,清波砦:false}},
-  {id:42,rarity:"★5",name:"求心の槍",type:"長柄武器",base:"意志",add:"電磁ダメージ",skill:"圧制",areas:{中枢エリア:true,源石研究パーク:true,鉱山エリア:false,エネルギー高地:false,武陵城:false,清波砦:true}},
-  {id:43,rarity:"★5",name:"作品：衆生",type:"拳銃",base:"敏捷",add:"アーツダメージ",skill:"付術",areas:{中枢エリア:false,源石研究パーク:true,鉱山エリア:false,エネルギー高地:false,武陵城:false,清波砦:false}},
-  {id:44,rarity:"★5",name:"O.B.J.迅速",type:"拳銃",base:"敏捷",add:"必殺技効率",skill:"噴発",areas:{中枢エリア:true,源石研究パーク:false,鉱山エリア:false,エネルギー高地:false,武陵城:true,清波砦:true}},
-  {id:45,rarity:"★5",name:"合理的決別",type:"拳銃",base:"筋力",add:"灼熱ダメージ",skill:"追襲",areas:{中枢エリア:true,源石研究パーク:false,鉱山エリア:false,エネルギー高地:true,武陵城:false,清波砦:false}},
-  {id:46,rarity:"★5",name:"弔いの詩",type:"アーツユニット",base:"知性",add:"攻撃力",skill:"夜幕",areas:{中枢エリア:false,源石研究パーク:false,鉱山エリア:false,エネルギー高地:false,武陵城:true,清波砦:false}},
-  {id:47,rarity:"★5",name:"術無",type:"アーツユニット",base:"意志",add:"必殺技効率",skill:"昂揚",areas:{中枢エリア:false,源石研究パーク:true,鉱山エリア:false,エネルギー高地:false,武陵城:false,清波砦:true}},
-  {id:48,rarity:"★5",name:"荒野迷走",type:"アーツユニット",base:"知性",add:"電磁ダメージ",skill:"付術",areas:{中枢エリア:false,源石研究パーク:true,鉱山エリア:false,エネルギー高地:false,武陵城:false,清波砦:false}},
-  {id:49,rarity:"★5",name:"布教の自由",type:"アーツユニット",base:"意志",add:"回復効率",skill:"治癒",areas:{中枢エリア:false,源石研究パーク:false,鉱山エリア:false,エネルギー高地:true,武陵城:true,清波砦:true}},
-  {id:50,rarity:"★5",name:"O.B.J.術識",type:"アーツユニット",base:"知性",add:"アーツ強度",skill:"追襲",areas:{中枢エリア:true,源石研究パーク:false,鉱山エリア:false,エネルギー高地:true,武陵城:false,清波砦:false}},
-  {id:51,rarity:"★4",name:"顕鋒",type:"片手剣",base:"敏捷",add:"物理ダメージ",skill:"制圧",areas:{中枢エリア:false,源石研究パーク:false,鉱山エリア:false,エネルギー高地:false,武陵城:false,清波砦:false}},
-  {id:52,rarity:"★4",name:"潮流",type:"片手剣",base:"知性",add:"攻撃力",skill:"追襲",areas:{中枢エリア:true,源石研究パーク:true,鉱山エリア:false,エネルギー高地:true,武陵城:false,清波砦:false}},
-  {id:53,rarity:"★4",name:"工業零点一",type:"大剣",base:"筋力",add:"攻撃力",skill:"制圧",areas:{中枢エリア:false,源石研究パーク:false,鉱山エリア:false,エネルギー高地:false,武陵城:false,清波砦:false}},
-  {id:54,rarity:"★4",name:"鍛冶師",type:"大剣",base:"意志",add:"HPアップ",skill:"破砕",areas:{中枢エリア:false,源石研究パーク:false,鉱山エリア:false,エネルギー高地:true,武陵城:true,清波砦:true}},
-  {id:55,rarity:"★4",name:"開拓者の道標",type:"長柄武器",base:"敏捷",add:"攻撃力",skill:"昂揚",areas:{中枢エリア:false,源石研究パーク:true,鉱山エリア:false,エネルギー高地:true,武陵城:false,清波砦:false}},
-  {id:56,rarity:"★4",name:"アンゲロス・スレイヤー",type:"長柄武器",base:"意志",add:"アーツダメージ",skill:"制圧",areas:{中枢エリア:false,源石研究パーク:false,鉱山エリア:false,エネルギー高地:false,武陵城:false,清波砦:true}},
-  {id:57,rarity:"★4",name:"ロアーガード",type:"拳銃",base:"知性",add:"攻撃力",skill:"制圧",areas:{中枢エリア:false,源石研究パーク:false,鉱山エリア:false,エネルギー高地:false,武陵城:false,清波砦:false}},
-  {id:58,rarity:"★4",name:"長路",type:"拳銃",base:"筋力",add:"アーツダメージ",skill:"追襲",areas:{中枢エリア:true,源石研究パーク:true,鉱山エリア:false,エネルギー高地:false,武陵城:false,清波砦:false}},
-  {id:59,rarity:"★4",name:"オート・ハイパーノヴァ",type:"アーツユニット",base:"知性",add:"アーツダメージ",skill:"昂揚",areas:{中枢エリア:false,源石研究パーク:true,鉱山エリア:false,エネルギー高地:false,武陵城:false,清波砦:true}},
-  {id:60,rarity:"★4",name:"蛍光雷羽",type:"アーツユニット",base:"意志",add:"攻撃力",skill:"制圧",areas:{中枢エリア:false,源石研究パーク:false,鉱山エリア:false,エネルギー高地:false,武陵城:false,清波砦:false}},
-  // ── v1.1 追加 ──
-  {id:61,rarity:"★6",name:"狼緋",type:"片手剣",base:"敏捷",add:"会心率",skill:"切骨",areas:{中枢エリア:false,源石研究パーク:true,鉱山エリア:false,エネルギー高地:true,武陵城:true,清波砦:false}},
+// ============================================================
+// ▼▼▼ 編集するのはここだけ ▼▼▼
+// ============================================================
+
+// 【武器データ】rarity/name/type/base/add/skill だけ書けばOK
+// エリア情報は不要（AREA_DEFSのeffectsから自動判定）
+const WEAPONS_RAW = [
+  // ── ★6 片手剣 ──
+  {rarity:"★6", name:"フレイムフォージ",    type:"片手剣",      base:"知性",      add:"攻撃力",        skill:"夜幕"},
+  {rarity:"★6", name:"大願",               type:"片手剣",      base:"敏捷",      add:"攻撃力",        skill:"付術"},
+  {rarity:"★6", name:"不知帰",             type:"片手剣",      base:"意志",      add:"攻撃力",        skill:"流回"},
+  {rarity:"★6", name:"テルミット・カッター", type:"片手剣",      base:"意志",      add:"攻撃力",        skill:"流回"},
+  {rarity:"★6", name:"ダークトーチ",        type:"片手剣",      base:"知性",      add:"灼熱ダメージ",   skill:"付術"},
+  {rarity:"★6", name:"フーヤオ",            type:"片手剣",      base:"メイン能力", add:"会心率",        skill:"夜幕"},
+  {rarity:"★6", name:"輝かしき名声",        type:"片手剣",      base:"メイン能力", add:"物理ダメージ",   skill:"残虐"},
+  {rarity:"★6", name:"白夜新星",            type:"片手剣",      base:"メイン能力", add:"アーツ強度",    skill:"付術"},
+  {rarity:"★6", name:"栄光の記憶",          type:"片手剣",      base:"敏捷",      add:"会心率",        skill:"夜幕"},
+  {rarity:"★6", name:"狼緋",               type:"片手剣",      base:"敏捷",      add:"会心率",        skill:"切骨"},
+  // ── ★6 大剣 ──
+  {rarity:"★6", name:"大雷斑",             type:"大剣",        base:"筋力",      add:"HPアップ",      skill:"治癒"},
+  {rarity:"★6", name:"グラヴェンガー",      type:"大剣",        base:"筋力",      add:"攻撃力",        skill:"噴発"},
+  {rarity:"★6", name:"鑑",                 type:"大剣",        base:"メイン能力", add:"攻撃力",        skill:"圧制"},
+  {rarity:"★6", name:"昔日の逸品",          type:"大剣",        base:"意志",      add:"HPアップ",      skill:"効率"},
+  {rarity:"★6", name:"破砕君王",            type:"大剣",        base:"筋力",      add:"会心率",        skill:"破砕"},
+  // ── ★6 長柄武器 ──
+  {rarity:"★6", name:"負山",               type:"長柄武器",    base:"敏捷",      add:"物理ダメージ",   skill:"効率"},
+  {rarity:"★6", name:"勇猛",               type:"長柄武器",    base:"敏捷",      add:"物理ダメージ",   skill:"巧技"},
+  {rarity:"★6", name:"J.E.T.",             type:"長柄武器",    base:"メイン能力", add:"攻撃力",        skill:"圧制"},
+  // ── ★6 拳銃 ──
+  {rarity:"★6", name:"芸術の独裁者",        type:"拳銃",        base:"知性",      add:"会心率",        skill:"切骨"},
+  {rarity:"★6", name:"ナビゲーター",         type:"拳銃",        base:"知性",      add:"寒冷ダメージ",   skill:"付術"},
+  {rarity:"★6", name:"楔",                 type:"拳銃",        base:"メイン能力", add:"会心率",        skill:"付術"},
+  {rarity:"★6", name:"同類共食",            type:"拳銃",        base:"メイン能力", add:"アーツダメージ", skill:"付術"},
+  {rarity:"★6", name:"落草",               type:"拳銃",        base:"敏捷",      add:"攻撃力",        skill:"噴発"},
+  {rarity:"★6", name:"望郷",               type:"拳銃",        base:"敏捷",      add:"寒冷ダメージ",   skill:"圧制"},
+  // ── ★6 アーツユニット ──
+  {rarity:"★6", name:"破壊ユニット",         type:"アーツユニット",base:"メイン能力", add:"アーツ強度",    skill:"噴発"},
+  {rarity:"★6", name:"蒼星の囁き",           type:"アーツユニット",base:"知性",      add:"回復効率",      skill:"付術"},
+  {rarity:"★6", name:"騎士精神",             type:"アーツユニット",base:"意志",      add:"HPアップ",      skill:"治癒"},
+  {rarity:"★6", name:"使命必達",             type:"アーツユニット",base:"意志",      add:"必殺技効率",    skill:"追襲"},
+  {rarity:"★6", name:"遺忘",                type:"アーツユニット",base:"知性",      add:"アーツダメージ", skill:"夜幕"},
+  {rarity:"★6", name:"作品：蝕跡",           type:"アーツユニット",base:"意志",      add:"自然ダメージ",   skill:"圧制"},
+  {rarity:"★6", name:"孤舟",                type:"アーツユニット",base:"意志",      add:"攻撃力",        skill:"圧制"},
+  {rarity:"★6", name:"朧光",                type:"アーツユニット",base:"意志",      add:"電磁ダメージ",   skill:"効率"},
+  // ── ★5 片手剣 ──
+  {rarity:"★5", name:"鋼鉄余音",            type:"片手剣",      base:"敏捷",      add:"物理ダメージ",   skill:"巧技"},
+  {rarity:"★5", name:"堅城鋳造者",           type:"片手剣",      base:"知性",      add:"必殺技効率",    skill:"昂揚"},
+  {rarity:"★5", name:"フィンチェイサー3.0",  type:"片手剣",      base:"筋力",      add:"寒冷ダメージ",   skill:"圧制"},
+  {rarity:"★5", name:"仰止",                type:"片手剣",      base:"敏捷",      add:"物理ダメージ",   skill:"夜幕"},
+  {rarity:"★5", name:"十二問",              type:"片手剣",      base:"敏捷",      add:"攻撃力",        skill:"付術"},
+  {rarity:"★5", name:"O.B.J.軽刃",          type:"片手剣",      base:"敏捷",      add:"攻撃力",        skill:"流回"},
+  // ── ★5 大剣 ──
+  {rarity:"★5", name:"探龍",                type:"大剣",        base:"筋力",      add:"必殺技効率",    skill:"噴発"},
+  {rarity:"★5", name:"千古恒常",             type:"大剣",        base:"筋力",      add:"アーツ強度",    skill:"残虐"},
+  {rarity:"★5", name:"最期の声",             type:"大剣",        base:"筋力",      add:"HPアップ",      skill:"治癒"},
+  {rarity:"★5", name:"O.B.J.重責",           type:"大剣",        base:"筋力",      add:"HPアップ",      skill:"効率"},
+  // ── ★5 長柄武器 ──
+  {rarity:"★5", name:"正義嵌合",             type:"長柄武器",    base:"筋力",      add:"必殺技効率",    skill:"残虐"},
+  {rarity:"★5", name:"O.B.J.鋭矛",           type:"長柄武器",    base:"意志",      add:"物理ダメージ",   skill:"付術"},
+  {rarity:"★5", name:"求心の槍",             type:"長柄武器",    base:"意志",      add:"電磁ダメージ",   skill:"圧制"},
+  // ── ★5 拳銃 ──
+  {rarity:"★5", name:"作品：衆生",           type:"拳銃",        base:"敏捷",      add:"アーツダメージ", skill:"付術"},
+  {rarity:"★5", name:"O.B.J.迅速",           type:"拳銃",        base:"敏捷",      add:"必殺技効率",    skill:"噴発"},
+  {rarity:"★5", name:"合理的決別",           type:"拳銃",        base:"筋力",      add:"灼熱ダメージ",   skill:"追襲"},
+  // ── ★5 アーツユニット ──
+  {rarity:"★5", name:"弔いの詩",             type:"アーツユニット",base:"知性",      add:"攻撃力",        skill:"夜幕"},
+  {rarity:"★5", name:"術無",                type:"アーツユニット",base:"意志",      add:"必殺技効率",    skill:"昂揚"},
+  {rarity:"★5", name:"荒野迷走",             type:"アーツユニット",base:"知性",      add:"電磁ダメージ",   skill:"付術"},
+  {rarity:"★5", name:"布教の自由",           type:"アーツユニット",base:"意志",      add:"回復効率",      skill:"治癒"},
+  {rarity:"★5", name:"O.B.J.術識",           type:"アーツユニット",base:"知性",      add:"アーツ強度",    skill:"追襲"},
+  // ── ★4 片手剣 ──
+  {rarity:"★4", name:"顕鋒",                type:"片手剣",      base:"敏捷",      add:"物理ダメージ",   skill:"制圧"},
+  {rarity:"★4", name:"潮流",                type:"片手剣",      base:"知性",      add:"攻撃力",        skill:"追襲"},
+  // ── ★4 大剣 ──
+  {rarity:"★4", name:"工業零点一",           type:"大剣",        base:"筋力",      add:"攻撃力",        skill:"制圧"},
+  {rarity:"★4", name:"鍛冶師",              type:"大剣",        base:"意志",      add:"HPアップ",      skill:"破砕"},
+  // ── ★4 長柄武器 ──
+  {rarity:"★4", name:"開拓者の道標",         type:"長柄武器",    base:"敏捷",      add:"攻撃力",        skill:"昂揚"},
+  {rarity:"★4", name:"アンゲロス・スレイヤー",type:"長柄武器",    base:"意志",      add:"アーツダメージ", skill:"制圧"},
+  // ── ★4 拳銃 ──
+  {rarity:"★4", name:"ロアーガード",          type:"拳銃",        base:"知性",      add:"攻撃力",        skill:"制圧"},
+  {rarity:"★4", name:"長路",                type:"拳銃",        base:"筋力",      add:"アーツダメージ", skill:"追襲"},
+  // ── ★4 アーツユニット ──
+  {rarity:"★4", name:"オート・ハイパーノヴァ",type:"アーツユニット",base:"知性",     add:"アーツダメージ", skill:"昂揚"},
+  {rarity:"★4", name:"蛍光雷羽",             type:"アーツユニット",base:"意志",      add:"攻撃力",        skill:"制圧"},
+  // ── 新規武器はここに追加 ──
+  // {rarity:"★6", name:"武器名", type:"片手剣", base:"敏捷", add:"攻撃力", skill:"夜幕"},
 ];
 
-const AREAS=["中枢エリア","源石研究パーク","鉱山エリア","エネルギー高地","武陵城","清波砦"];
-const AS={"中枢エリア":"中枢","源石研究パーク":"源石","鉱山エリア":"鉱山","エネルギー高地":"ENG","武陵城":"武陵城","清波砦":"清波砦"};
-const BASES=["敏捷","筋力","意志","知性","メイン能力"];
-const TYPE_ORDER=["片手剣","大剣","長柄武器","拳銃","アーツユニット"];
-const AC={
-  "中枢エリア":   {bg:"rgba(74,142,196,.08)", bd:"rgba(74,142,196,.3)", tx:"#4a8ec4"},
-  "源石研究パーク":{bg:"rgba(160,108,192,.08)",bd:"rgba(160,108,192,.3)",tx:"#a06cc0"},
-  "鉱山エリア":   {bg:"rgba(196,152,72,.08)", bd:"rgba(196,152,72,.3)", tx:"#c49848"},
-  "エネルギー高地":{bg:"rgba(212,80,80,.08)",  bd:"rgba(212,80,80,.3)",  tx:"#d45050"},
-  "武陵城":       {bg:"rgba(61,184,106,.08)",  bd:"rgba(61,184,106,.3)", tx:"#3db86a"},
-  "清波砦":       {bg:"rgba(58,184,200,.08)",  bd:"rgba(58,184,200,.3)", tx:"#3ab8c8"},
-};
+// 【エリアデータ】
+// ▼ エリア追加時はここに1ブロック追加するだけ！dropsは不要
+// effects の add/skill に含まれる武器が自動的にそのエリアのドロップ候補になる
+const AREA_DEFS = [
+  {
+    name:"中枢エリア", short:"中枢",
+    color:{bg:"rgba(74,142,196,.08)", bd:"rgba(74,142,196,.3)", tx:"#4a8ec4"},
+    effects:{
+      base:["敏捷","筋力","意志","知性","メイン能力"],
+      add: ["攻撃力","灼熱ダメージ","電磁ダメージ","寒冷ダメージ","自然ダメージ","アーツ強度","必殺技効率","アーツダメージ"],
+      skill:["強攻","圧制","追襲","破砕","巧技","噴発","流回","効率"],
+    },
+  },
+  {
+    name:"源石研究パーク", short:"源石",
+    color:{bg:"rgba(160,108,192,.08)",bd:"rgba(160,108,192,.3)",tx:"#a06cc0"},
+    effects:{
+      base:["敏捷","筋力","意志","知性","メイン能力"],
+      add: ["攻撃力","物理ダメージ","電磁ダメージ","寒冷ダメージ","自然ダメージ","会心率","必殺技効率","アーツダメージ"],
+      skill:["圧制","追襲","昂揚","巧技","付術","治癒","切骨","効率"],
+    },
+  },
+  {
+    name:"鉱山エリア", short:"鉱山",
+    color:{bg:"rgba(196,152,72,.08)", bd:"rgba(196,152,72,.3)", tx:"#c49848"},
+    effects:{
+      base:["敏捷","筋力","意志","知性","メイン能力"],
+      add: ["HPアップ","物理ダメージ","灼熱ダメージ","寒冷ダメージ","自然ダメージ","会心率","アーツ強度","回復効率"],
+      skill:["強攻","圧制","巧技","残虐","付術","噴発","夜幕","効率"],
+    },
+  },
+  {
+    name:"エネルギー高地", short:"ENG",
+    color:{bg:"rgba(212,80,80,.08)",  bd:"rgba(212,80,80,.3)",  tx:"#d45050"},
+    effects:{
+      base:["敏捷","筋力","意志","知性","メイン能力"],
+      add: ["攻撃力","HPアップ","物理ダメージ","灼熱ダメージ","自然ダメージ","会心率","アーツ強度","回復効率"],
+      skill:["追襲","破砕","昂揚","残虐","付術","治癒","切骨","流回"],
+    },
+  },
+  {
+    name:"武陵城", short:"武陵城",
+    color:{bg:"rgba(61,184,106,.08)", bd:"rgba(61,184,106,.3)", tx:"#3db86a"},
+    effects:{
+      base:["敏捷","筋力","意志","知性","メイン能力"],
+      add: ["攻撃力","HPアップ","電磁ダメージ","寒冷ダメージ","会心率","必殺技効率","アーツダメージ","回復効率"],
+      skill:["強攻","破砕","残虐","治癒","切骨","噴発","夜幕","流回"],
+    },
+  },
+  {
+    name:"清波砦", short:"清波砦",
+    color:{bg:"rgba(58,184,200,.08)", bd:"rgba(58,184,200,.3)", tx:"#3ab8c8"},
+    effects:{
+      base:["敏捷","筋力","意志","知性","メイン能力"],
+      add: ["HPアップ","物理ダメージ","電磁ダメージ","寒冷ダメージ","アーツ強度","必殺技効率","アーツダメージ","回復効率"],
+      skill:["圧制","破砕","昂揚","巧技","治癒","切骨","噴発","夜幕"],
+    },
+  },
+  {
+    name:"首礎", short:"首礎",
+    color:{bg:"rgba(220,140,60,.08)", bd:"rgba(220,140,60,.3)", tx:"#dc8c3c"},
+    effects:{
+      base:["敏捷","筋力","意志","知性","メイン能力"],
+      add: ["攻撃力","物理ダメージ","灼熱ダメージ","電磁ダメージ","自然ダメージ","会心率","必殺技効率","アーツダメージ"],
+      skill:["強攻","追襲","昂揚","残虐","付術","夜幕","流回","効率"],
+    },
+  },
+  // ── 新規エリアはここに追加 ──
+  // {
+  //   name:"新エリア名", short:"短縮名",
+  //   color:{bg:"rgba(R,G,B,.08)", bd:"rgba(R,G,B,.3)", tx:"#RRGGBB"},
+  //   effects:{ base:[...], add:[...], skill:[...] },
+  // },
+];
+
+// ============================================================
+// ▲▲▲ 編集するのはここまで ▲▲▲
+// ── 以下は自動生成（触らなくてOK）──
+// ============================================================
+
+// IDを自動採番
+WEAPONS_RAW.forEach((w,i)=>{ w.id = i+1; });
+
+const AREAS = AREA_DEFS.map(a=>a.name);
+const AS    = Object.fromEntries(AREA_DEFS.map(a=>[a.name, a.short]));
+const AC    = Object.fromEntries(AREA_DEFS.map(a=>[a.name, a.color]));
+
+// effectsベースでareasを自動生成（add と skill の両方が一致するエリアにドロップ）
+const WEAPONS = WEAPONS_RAW.map(w=>({
+  ...w,
+  areas: Object.fromEntries(
+    AREA_DEFS.map(a=>[
+      a.name,
+      a.effects.add.includes(w.add) && a.effects.skill.includes(w.skill)
+    ])
+  ),
+}));
+
+const BASES      = ["敏捷","筋力","意志","知性","メイン能力"];
+const TYPE_ORDER = ["片手剣","大剣","長柄武器","拳銃","アーツユニット"];
 
 let selIds=new Set();
 const af={};AREAS.forEach(a=>{af[a]={add:"",skill:""};});
@@ -1006,6 +1242,92 @@ renderSolver();renderSearch();renderInv();
 if('serviceWorker' in navigator){
   navigator.serviceWorker.register('sw.js').catch(()=>{});
 }
+
+// AREA LIST
+const alF={base:'',add:'',skill:''};
+
+function renderAreaList(){
+  const sec=document.getElementById('al-sections');
+  const fBase=alF.base, fAdd=alF.add, fSkill=alF.skill;
+  const filtering=fBase||fAdd||fSkill;
+  let matchedAreas=0;
+  let html='';
+  const ro={"★6":0,"★5":1,"★4":2};
+
+  AREA_DEFS.forEach(areaDef=>{
+    const area=areaDef.name;
+    const col=AC[area];
+    const eff=areaDef.effects||{base:[],add:[],skill:[]};
+
+    // effectsベースで絞り込み
+    if(fBase  && !eff.base.includes(fBase))   return;
+    if(fAdd   && !eff.add.includes(fAdd))     return;
+    if(fSkill && !eff.skill.includes(fSkill)) return;
+    matchedAreas++;
+
+    // ドロップ武器はレア度順に全表示
+    let weapons=WEAPONS.filter(w=>w.areas[area]);
+    weapons.sort((a,b)=>(ro[a.rarity]||0)-(ro[b.rarity]||0)||a.name.localeCompare(b.name,'ja'));
+
+    const cards=weapons.map(w=>`
+      <div class="fw" style="border-left-color:${col.bd};background:${col.bg}">
+        <div class="fw-top">
+          <span class="rtag ${rc(w.rarity)}">${w.rarity}</span>
+          <span class="fw-name">${w.name}</span>
+        </div>
+        <div class="fw-tags">
+          <span class="tag tp">${w.type}</span>
+          <span class="tag bs">◇${w.base}</span>
+          <span class="tag ad">+${w.add}</span>
+          <span class="tag sk">◆${w.skill}</span>
+        </div>
+      </div>`).join('');
+
+    // effects表示
+    const effRow=(label,items,fVal,cls)=>items.length?`
+      <div style="display:flex;align-items:flex-start;gap:6px;padding:4px 0">
+        <span style="font-family:'Share Tech Mono',monospace;font-size:8px;color:var(--dim);letter-spacing:.1em;flex-shrink:0;padding-top:3px;width:36px">${label}</span>
+        <div style="display:flex;flex-wrap:wrap;gap:3px">${items.map(v=>`
+          <span style="font-size:10px;padding:1px 6px;border-radius:1px;border:1px solid ${fVal===v?col.bd:'var(--border)'};color:${fVal===v?col.tx:'var(--dim)'};background:${fVal===v?col.bg:'transparent'}">${v}</span>
+        `).join('')}</div>
+      </div>`:'';
+
+    html+=`
+      <div class="area-sec" style="border-color:${col.bd};margin-bottom:10px">
+        <div class="area-hdr" style="background:${col.bg};border-bottom-color:${col.bd}">
+          <span style="font-size:10px;color:${col.tx};font-family:'Share Tech Mono',monospace">▶</span>
+          <span class="area-hdr-name" style="color:${col.tx}">${area}</span>
+          <span class="area-cnt" style="background:${col.bg};color:${col.tx};border:1px solid ${col.bd}">${weapons.length} WEAPONS</span>
+        </div>
+        <div style="padding:6px 12px;border-bottom:1px solid var(--border);background:var(--bg3)">
+          ${effRow('BASE',eff.base,fBase)}
+          ${effRow('ADD', eff.add, fAdd)}
+          ${effRow('SKILL',eff.skill,fSkill)}
+        </div>
+        <div class="farm-list">${cards||'<div style="font-family:\'Share Tech Mono\',monospace;font-size:10px;color:var(--dim);padding:4px 0">NO DROPS</div>'}</div>
+      </div>`;
+  });
+
+  if(!html) html='<div class="empty-msg"><div class="ei">◈</div>該当するエリアがありません</div>';
+  sec.innerHTML=html;
+  document.getElementById('al-total').textContent=filtering?`${matchedAreas} AREAS MATCHED`:'全エリア表示';
+}
+
+['al-base','al-add','al-skill'].forEach(id=>{
+  document.getElementById(id).addEventListener('change',e=>{
+    const key=id.replace('al-','');
+    alF[key]=e.target.value;
+    renderAreaList();
+  });
+});
+
+document.getElementById('al-reset').addEventListener('click',()=>{
+  alF.base='';alF.add='';alF.skill='';
+  ['al-base','al-add','al-skill'].forEach(id=>document.getElementById(id).value='');
+  renderAreaList();
+});
+
+renderAreaList();
 </script>
 </body>
 </html>
